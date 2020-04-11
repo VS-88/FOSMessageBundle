@@ -3,6 +3,7 @@
 namespace FOS\MessageBundle\EntityManager;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use FOS\MessageBundle\Model\MessageInterface;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ReadableInterface;
@@ -22,7 +23,7 @@ class MessageManager extends BaseMessageManager
     protected $em;
 
     /**
-     * @var DocumentRepository
+     * @var EntityRepository
      */
     protected $repository;
 

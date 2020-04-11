@@ -2,6 +2,10 @@
 
 namespace FOS\MessageBundle\Tests\Twig\Extension;
 
+use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Provider\ProviderInterface;
+use FOS\MessageBundle\Security\AuthorizerInterface;
+use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use FOS\MessageBundle\Twig\Extension\MessageExtension;
 use PHPUnit\Framework\TestCase;
 
@@ -10,13 +14,32 @@ use PHPUnit\Framework\TestCase;
  */
 class MessageExtensionTest extends TestCase
 {
+    /**
+     * @var MessageExtension
+     */
     private $extension;
+
+    /**
+     * @var ParticipantProviderInterface
+     */
     private $participantProvider;
+
+    /**
+     * @var ProviderInterface
+     */
     private $provider;
+
+    /**
+     * @var AuthorizerInterface
+     */
     private $authorizer;
+
+    /**
+     * @var ParticipantInterface
+     */
     private $participant;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->participantProvider = $this->getMockBuilder('FOS\MessageBundle\Security\ParticipantProviderInterface')->getMock();
         $this->provider = $this->getMockBuilder('FOS\MessageBundle\Provider\ProviderInterface')->getMock();
@@ -63,15 +86,8 @@ class MessageExtensionTest extends TestCase
         $this->assertTrue($this->extension->isThreadDeletedByParticipant($thread));
     }
 
-    public function testGetNbUnreadCacheStartsEmpty()
-    {
-        $this->assertAttributeEmpty('nbUnreadMessagesCache', $this->extension);
-        $this->extension->getNbUnread();
-    }
-
     public function testGetNbUnread()
     {
-        $this->assertAttributeEmpty('nbUnreadMessagesCache', $this->extension);
         $this->provider->expects($this->once())->method('getNbUnreadMessages')->will($this->returnValue(3));
         $this->assertEquals(3, $this->extension->getNbUnread());
     }

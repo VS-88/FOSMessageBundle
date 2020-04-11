@@ -5,6 +5,7 @@ namespace FOS\MessageBundle\Tests\EntityManager;
 use FOS\MessageBundle\EntityManager\ThreadManager;
 use FOS\MessageBundle\Model\ThreadInterface;
 use PHPUnit\Framework\TestCase;
+use FOS\MessageBundle\Entity\Message;
 
 /**
  * Class ThreadManagerTest.
@@ -16,7 +17,7 @@ class ThreadManagerTest extends TestCase
     protected $user;
     protected $date;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->user = $this->createParticipantMock('4711');
         $this->date = new \DateTime('2013-12-25');
@@ -120,7 +121,7 @@ class ThreadManagerTest extends TestCase
      */
     protected function createMessageMock()
     {
-        $message = $this->getMockBuilder('FOS\MessageBundle\Document\Message')
+        $message = $this->getMockBuilder(Message::class)
             ->getMock();
 
         $message->expects($this->any())
