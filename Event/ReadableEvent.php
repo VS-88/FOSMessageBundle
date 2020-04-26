@@ -1,9 +1,10 @@
 <?php
+declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Event;
 
 use FOS\MessageBundle\Model\ReadableInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ReadableEvent extends Event
 {
@@ -20,7 +21,7 @@ class ReadableEvent extends Event
     /**
      * @return ReadableInterface
      */
-    public function getReadable()
+    public function getReadable(): ReadableInterface
     {
         return $this->readable;
     }

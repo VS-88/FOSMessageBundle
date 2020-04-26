@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Event;
 
@@ -21,7 +22,7 @@ class MessageEvent extends ThreadEvent
     /**
      * @return MessageInterface
      */
-    public function getMessage()
+    public function getMessage(): MessageInterface
     {
         return $this->message;
     }
