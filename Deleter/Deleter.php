@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Deleter;
 
@@ -49,27 +50,27 @@ class Deleter implements DeleterInterface
     /**
      * {@inheritdoc}
      */
-    public function markAsDeleted(ThreadInterface $thread)
+    public function markAsDeleted(ThreadInterface $thread): void
     {
         if (!$this->authorizer->canDeleteThread($thread)) {
             throw new AccessDeniedException('You are not allowed to delete this thread');
         }
         $thread->setIsDeletedByParticipant($this->getAuthenticatedParticipant(), true);
 
-        $this->dispatcher->dispatch(FOSMessageEvents::POST_DELETE, new ThreadEvent($thread));
+        $this->dispatcher->dispatch(new ThreadEvent($thread), FOSMessageEvents::POST_DELETE);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function markAsUndeleted(ThreadInterface $thread)
+    public function markAsUndeleted(ThreadInterface $thread): void
     {
         if (!$this->authorizer->canDeleteThread($thread)) {
             throw new AccessDeniedException('You are not allowed to delete this thread');
         }
         $thread->setIsDeletedByParticipant($this->getAuthenticatedParticipant(), false);
 
-        $this->dispatcher->dispatch(FOSMessageEvents::POST_UNDELETE, new ThreadEvent($thread));
+        $this->dispatcher->dispatch(new ThreadEvent($thread), FOSMessageEvents::POST_UNDELETE);
     }
 
     /**
@@ -77,7 +78,7 @@ class Deleter implements DeleterInterface
      *
      * @return ParticipantInterface
      */
-    protected function getAuthenticatedParticipant()
+    protected function getAuthenticatedParticipant(): ParticipantInterface
     {
         return $this->participantProvider->getAuthenticatedParticipant();
     }

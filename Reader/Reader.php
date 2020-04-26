@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Reader;
 
@@ -48,7 +49,7 @@ class Reader implements ReaderInterface
     /**
      * {@inheritdoc}
      */
-    public function markAsRead(ReadableInterface $readable)
+    public function markAsRead(ReadableInterface $readable): void
     {
         $participant = $this->getAuthenticatedParticipant();
         if ($readable->isReadByParticipant($participant)) {
@@ -56,13 +57,13 @@ class Reader implements ReaderInterface
         }
         $this->readableManager->markAsReadByParticipant($readable, $participant);
 
-        $this->dispatcher->dispatch(FOSMessageEvents::POST_READ, new ReadableEvent($readable));
+        $this->dispatcher->dispatch(new ReadableEvent($readable), FOSMessageEvents::POST_READ);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function markAsUnread(ReadableInterface $readable)
+    public function markAsUnread(ReadableInterface $readable): void
     {
         $participant = $this->getAuthenticatedParticipant();
         if (!$readable->isReadByParticipant($participant)) {
@@ -70,7 +71,7 @@ class Reader implements ReaderInterface
         }
         $this->readableManager->markAsUnreadByParticipant($readable, $participant);
 
-        $this->dispatcher->dispatch(FOSMessageEvents::POST_UNREAD, new ReadableEvent($readable));
+        $this->dispatcher->dispatch(new ReadableEvent($readable), FOSMessageEvents::POST_UNREAD);
     }
 
     /**
@@ -78,7 +79,7 @@ class Reader implements ReaderInterface
      *
      * @return ParticipantInterface
      */
-    protected function getAuthenticatedParticipant()
+    protected function getAuthenticatedParticipant(): ParticipantInterface
     {
         return $this->participantProvider->getAuthenticatedParticipant();
     }
