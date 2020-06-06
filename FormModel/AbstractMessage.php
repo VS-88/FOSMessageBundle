@@ -17,7 +17,7 @@ abstract class AbstractMessage
     /**
      * @return string
      */
-    public function getBody(): string
+    public function getBody(): ?string
     {
         return $this->body;
     }

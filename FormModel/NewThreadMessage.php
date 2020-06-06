@@ -28,7 +28,7 @@ class NewThreadMessage extends AbstractMessage
     /**
      * @return string
      */
-    public function getSubject(): string
+    public function getSubject(): ?string
     {
         return $this->subject;
     }
@@ -44,7 +44,7 @@ class NewThreadMessage extends AbstractMessage
     /**
      * @return ParticipantInterface
      */
-    public function getRecipient(): ParticipantInterface
+    public function getRecipient(): ?ParticipantInterface
     {
         return $this->recipient;
     }

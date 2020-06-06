@@ -21,7 +21,7 @@ class ReplyMessage extends AbstractMessage
     /**
      * @return ThreadInterface
      */
-    public function getThread(): ThreadInterface
+    public function getThread(): ?ThreadInterface
     {
         return $this->thread;
     }
