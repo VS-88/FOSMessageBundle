@@ -28,7 +28,7 @@ abstract class AbstractMessageMetadata extends BaseMessageMetadata
      *
      * @var bool
      */
-    protected $isRead;
+    protected $isRead = false;
 
     /**
      * @return int|string

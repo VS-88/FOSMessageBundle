@@ -37,7 +37,7 @@ abstract class AbstractThread extends BaseThread
      *
      * @var bool
      */
-    protected $isSpam;
+    protected $isSpam = false;
 
     /**
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
