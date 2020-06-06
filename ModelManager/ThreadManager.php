@@ -1,8 +1,7 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\ModelManager;
-
-use FOS\MessageBundle\Model\ThreadInterface;
 
 /**
  * Abstract Thread Manager implementation which can be used as base class by your
@@ -12,15 +11,5 @@ use FOS\MessageBundle\Model\ThreadInterface;
  */
 abstract class ThreadManager implements ThreadManagerInterface
 {
-    /**
-     * Creates an empty comment thread instance.
-     *
-     * @return ThreadInterface
-     */
-    public function createThread()
-    {
-        $class = $this->getClass();
 
-        return new $class();
-    }
 }

@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Model;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 
 /**
  * Abstract message model.
@@ -36,7 +39,7 @@ abstract class Message implements MessageInterface
     /**
      * Date when the message was sent.
      *
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
@@ -59,7 +62,7 @@ abstract class Message implements MessageInterface
      */
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new DateTime();
         $this->metadata = new ArrayCollection();
     }
 
@@ -74,7 +77,7 @@ abstract class Message implements MessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getThread()
+    public function getThread(): ThreadInterface
     {
         return $this->thread;
     }
@@ -82,15 +85,17 @@ abstract class Message implements MessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setThread(ThreadInterface $thread)
+    public function setThread(ThreadInterface $thread): MessageInterface
     {
         $this->thread = $thread;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }
@@ -98,7 +103,7 @@ abstract class Message implements MessageInterface
     /**
      * {@inheritdoc}
      */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
@@ -106,15 +111,17 @@ abstract class Message implements MessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setBody($body)
+    public function setBody(string $body): MessageInterface
     {
         $this->body = $body;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSender()
+    public function getSender(): ParticipantInterface
     {
         return $this->sender;
     }
@@ -122,9 +129,11 @@ abstract class Message implements MessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setSender(ParticipantInterface $sender)
+    public function setSender(ParticipantInterface $sender): MessageInterface
     {
         $this->sender = $sender;
+
+        return $this;
     }
 
     /**
@@ -132,7 +141,7 @@ abstract class Message implements MessageInterface
      *
      * @return int
      */
-    public function getTimestamp()
+    public function getTimestamp(): int
     {
         return $this->getCreatedAt()->getTimestamp();
     }
@@ -140,11 +149,14 @@ abstract class Message implements MessageInterface
     /**
      * Adds MessageMetadata to the metadata collection.
      *
-     * @param MessageMetadata $meta
+     * @param MessageMetadataInterface $meta
+     * @return MessageInterface
      */
-    public function addMetadata(MessageMetadata $meta)
+    public function addMetadata(MessageMetadataInterface $meta): MessageInterface
     {
         $this->metadata->add($meta);
+
+        return $this;
     }
 
     /**
@@ -154,10 +166,10 @@ abstract class Message implements MessageInterface
      *
      * @return MessageMetadata
      */
-    public function getMetadataForParticipant(ParticipantInterface $participant)
+    public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadata
     {
         foreach ($this->metadata as $meta) {
-            if ($meta->getParticipant()->getId() == $participant->getId()) {
+            if ($meta->getParticipant()->getId() === $participant->getId()) {
                 return $meta;
             }
         }
@@ -168,7 +180,7 @@ abstract class Message implements MessageInterface
     /**
      * {@inheritdoc}
      */
-    public function isReadByParticipant(ParticipantInterface $participant)
+    public function isReadByParticipant(ParticipantInterface $participant): bool
     {
         if ($meta = $this->getMetadataForParticipant($participant)) {
             return $meta->getIsRead();
@@ -180,10 +192,12 @@ abstract class Message implements MessageInterface
     /**
      * {@inheritdoc}
      */
-    public function setIsReadByParticipant(ParticipantInterface $participant, $isRead)
+    public function setIsReadByParticipant(ParticipantInterface $participant, bool $isRead): void
     {
         if (!$meta = $this->getMetadataForParticipant($participant)) {
-            throw new \InvalidArgumentException(sprintf('No metadata exists for participant with id "%s"', $participant->getId()));
+            throw new InvalidArgumentException(
+                sprintf('No metadata exists for participant with id "%s"', $participant->getId())
+            );
         }
 
         $meta->setIsRead($isRead);

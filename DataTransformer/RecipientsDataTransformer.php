@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace FOS\MessageBundle\DataTransformer;
 
@@ -21,6 +22,10 @@ class RecipientsDataTransformer implements DataTransformerInterface
      */
     private $userToUsernameTransformer;
 
+    /**
+     * RecipientsDataTransformer constructor.
+     * @param DataTransformerInterface $userToUsernameTransformer
+     */
     public function __construct(DataTransformerInterface $userToUsernameTransformer)
     {
         $this->userToUsernameTransformer = $userToUsernameTransformer;
@@ -33,13 +38,13 @@ class RecipientsDataTransformer implements DataTransformerInterface
      *
      * @return string
      */
-    public function transform($recipients)
+    public function transform($recipients): string
     {
-        if (null === $recipients || 0 === $recipients->count()) {
+        if ($recipients === null || $recipients->count() === 0) {
             return '';
         }
 
-        $usernames = array();
+        $usernames = [];
 
         foreach ($recipients as $recipient) {
             $usernames[] = $this->userToUsernameTransformer->transform($recipient);
@@ -58,9 +63,9 @@ class RecipientsDataTransformer implements DataTransformerInterface
      *
      * @return Collection $recipients
      */
-    public function reverseTransform($usernames)
+    public function reverseTransform($usernames): ?Collection
     {
-        if (null === $usernames || '' === $usernames) {
+        if ($usernames === null || $usernames === '') {
             return null;
         }
 

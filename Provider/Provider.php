@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Provider;
 
 use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Model\ThreadInterface;
 use FOS\MessageBundle\ModelManager\MessageManagerInterface;
 use FOS\MessageBundle\ModelManager\ThreadManagerInterface;
 use FOS\MessageBundle\Reader\ReaderInterface;
@@ -53,8 +55,21 @@ class Provider implements ProviderInterface
      */
     protected $participantProvider;
 
-    public function __construct(ThreadManagerInterface $threadManager, MessageManagerInterface $messageManager, ReaderInterface $threadReader, AuthorizerInterface $authorizer, ParticipantProviderInterface $participantProvider)
-    {
+    /**
+     * Provider constructor.
+     * @param ThreadManagerInterface $threadManager
+     * @param MessageManagerInterface $messageManager
+     * @param ReaderInterface $threadReader
+     * @param AuthorizerInterface $authorizer
+     * @param ParticipantProviderInterface $participantProvider
+     */
+    public function __construct(
+        ThreadManagerInterface $threadManager,
+        MessageManagerInterface $messageManager,
+        ReaderInterface $threadReader,
+        AuthorizerInterface $authorizer,
+        ParticipantProviderInterface $participantProvider
+    ) {
         $this->threadManager = $threadManager;
         $this->messageManager = $messageManager;
         $this->threadReader = $threadReader;
@@ -65,7 +80,7 @@ class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getInboxThreads()
+    public function getInboxThreads(): array
     {
         $participant = $this->getAuthenticatedParticipant();
 
@@ -75,7 +90,7 @@ class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getSentThreads()
+    public function getSentThreads(): array
     {
         $participant = $this->getAuthenticatedParticipant();
 
@@ -85,7 +100,7 @@ class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeletedThreads()
+    public function getDeletedThreads(): array
     {
         $participant = $this->getAuthenticatedParticipant();
 
@@ -95,7 +110,7 @@ class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getThread($threadId)
+    public function getThread($threadId): ?ThreadInterface
     {
         $thread = $this->threadManager->findThreadById($threadId);
         if (!$thread) {
@@ -115,7 +130,7 @@ class Provider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getNbUnreadMessages()
+    public function getNbUnreadMessages(): int
     {
         return $this->messageManager->getNbUnreadMessageByParticipant($this->getAuthenticatedParticipant());
     }
@@ -125,7 +140,7 @@ class Provider implements ProviderInterface
      *
      * @return ParticipantInterface
      */
-    protected function getAuthenticatedParticipant()
+    protected function getAuthenticatedParticipant(): ParticipantInterface
     {
         return $this->participantProvider->getAuthenticatedParticipant();
     }

@@ -32,8 +32,18 @@ class Sender implements SenderInterface
      */
     protected $dispatcher;
 
-    public function __construct(MessageManagerInterface $messageManager, ThreadManagerInterface $threadManager, EventDispatcherInterface $dispatcher)
-    {
+    /**
+     * Sender constructor.
+     *
+     * @param MessageManagerInterface $messageManager
+     * @param ThreadManagerInterface $threadManager
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(
+        MessageManagerInterface $messageManager,
+        ThreadManagerInterface $threadManager,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->messageManager = $messageManager;
         $this->threadManager = $threadManager;
         $this->dispatcher = $dispatcher;

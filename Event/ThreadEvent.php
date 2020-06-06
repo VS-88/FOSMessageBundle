@@ -6,6 +6,10 @@ namespace FOS\MessageBundle\Event;
 use FOS\MessageBundle\Model\ThreadInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Class ThreadEvent
+ * @package FOS\MessageBundle\Event
+ */
 class ThreadEvent extends Event
 {
     /**
@@ -13,6 +17,10 @@ class ThreadEvent extends Event
      */
     private $thread;
 
+    /**
+     * ThreadEvent constructor.
+     * @param ThreadInterface $thread
+     */
     public function __construct(ThreadInterface $thread)
     {
         $this->thread = $thread;

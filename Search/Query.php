@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Search;
 
@@ -10,27 +11,27 @@ class Query
     /**
      * @var string
      */
-    protected $original = null;
+    protected $original;
 
     /**
      * @var string
      */
-    protected $escaped = null;
+    protected $escaped;
 
     /**
      * @param string $original
      * @param string $escaped
      */
-    public function __construct($original, $escaped)
+    public function __construct(string $original, string $escaped)
     {
         $this->original = $original;
-        $this->escaped = $escaped;
+        $this->escaped  = $escaped;
     }
 
     /**
      * @return string original
      */
-    public function getOriginal()
+    public function getOriginal(): string
     {
         return $this->original;
     }
@@ -38,7 +39,7 @@ class Query
     /**
      * @param string $original
      */
-    public function setOriginal($original)
+    public function setOriginal(string $original): void
     {
         $this->original = $original;
     }
@@ -46,7 +47,7 @@ class Query
     /**
      * @return string escaped
      */
-    public function getEscaped()
+    public function getEscaped(): string
     {
         return $this->escaped;
     }
@@ -54,7 +55,7 @@ class Query
     /**
      * @param string $escaped
      */
-    public function setEscaped($escaped)
+    public function setEscaped(string $escaped): void
     {
         $this->escaped = $escaped;
     }
@@ -66,10 +67,10 @@ class Query
      */
     public function __toString()
     {
-        return (string) $this->getOriginal();
+        return $this->getOriginal();
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->original);
     }

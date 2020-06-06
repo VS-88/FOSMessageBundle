@@ -1,14 +1,22 @@
 <?php
+declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Class ReplyAuthorization
+ * @package FOS\MessageBundle\Validator
+ */
 class ReplyAuthorization extends Constraint
 {
     public $message = 'fos_message.reply_not_authorized';
 
-    public function validatedBy()
+    /**
+     * @return string
+     */
+    public function validatedBy(): string
     {
         return 'fos_message.validator.reply_authorization';
     }
@@ -18,6 +26,6 @@ class ReplyAuthorization extends Constraint
      */
     public function getTargets()
     {
-        return self::CLASS_CONSTRAINT;
+        return static::CLASS_CONSTRAINT;
     }
 }

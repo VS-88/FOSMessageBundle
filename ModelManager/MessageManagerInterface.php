@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\ModelManager;
 
+use Exception;
 use FOS\MessageBundle\Model\MessageInterface;
 use FOS\MessageBundle\Model\ParticipantInterface;
 
@@ -21,28 +23,25 @@ interface MessageManagerInterface extends ReadableManagerInterface
      * @param ParticipantInterface $participant
      *
      * @return int the number of unread messages
+     *
+     * @throws Exception
      */
-    public function getNbUnreadMessageByParticipant(ParticipantInterface $participant);
+    public function getNbUnreadMessageByParticipant(ParticipantInterface $participant): int;
 
     /**
      * Creates an empty message instance.
      *
      * @return MessageInterface
      */
-    public function createMessage();
+    public function createMessage(): MessageInterface;
 
     /**
      * Saves a message.
      *
      * @param MessageInterface $message
      * @param bool             $andFlush Whether to flush the changes (default true)
-     */
-    public function saveMessage(MessageInterface $message, $andFlush = true);
-
-    /**
-     * Returns the message's fully qualified class MessageManagerInterface.
      *
-     * @return string
+     * @throws \Exception
      */
-    public function getClass();
+    public function saveMessage(MessageInterface $message, bool $andFlush = true): void;
 }

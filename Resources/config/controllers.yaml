@@ -1,0 +1,59 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    
+  FOS\MessageBundle\Controller\InboxController:
+    class: FOS\MessageBundle\Controller\InboxController
+    arguments:
+      - '@fos_message.provider.default'
+      - '%template_paths.inbox%'
+
+  FOS\MessageBundle\Controller\SentController:
+    class: FOS\MessageBundle\Controller\SentController
+    arguments:
+      - '@fos_message.provider.default'
+      - '%template_paths.sent%'
+    public: true
+
+  FOS\MessageBundle\Controller\ThreadCreateController:
+    class: FOS\MessageBundle\Controller\ThreadCreateController
+    arguments:
+      - '%template_paths.new_thread%'
+      - '@fos_message.new_thread_form.factory.default'
+      - '@fos_message.new_thread_form.handler.default'
+
+  FOS\MessageBundle\Controller\ThreadDeleteController:
+    class: FOS\MessageBundle\Controller\ThreadDeleteController
+    arguments:
+      - '@fos_message.provider.default'
+      - '@fos_message.deleter.default'
+      - '@fos_message.thread_manager.default'
+
+  FOS\MessageBundle\Controller\ThreadDeletedController:
+    class: FOS\MessageBundle\Controller\ThreadDeletedController
+    arguments:
+      - '@fos_message.provider.default'
+      - '%template_paths.deleted%'
+
+  FOS\MessageBundle\Controller\ThreadSearchController:
+    class: FOS\MessageBundle\Controller\ThreadSearchController
+    arguments:
+      - '@fos_message.search_query_factory.default'
+      - '@fos_message.search_finder.default'
+      - '%template_paths.search%'
+
+  FOS\MessageBundle\Controller\ThreadUndeleteController:
+    class: FOS\MessageBundle\Controller\ThreadUndeleteController
+    arguments:
+      - '@fos_message.provider.default'
+      - '@fos_message.deleter.default'
+      - '@fos_message.thread_manager.default'
+
+  FOS\MessageBundle\Controller\ThreadViewController:
+    class: FOS\MessageBundle\Controller\ThreadViewController
+    arguments:
+      - '@fos_message.provider.default'
+      - '%template_paths.view_thread%'
+      - '@fos_message.reply_form.factory.default'
+      - '@fos_message.reply_form.handler.default'

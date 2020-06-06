@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormFactory;
 
@@ -19,7 +20,7 @@ class ReplyMessageFormFactory extends AbstractMessageFormFactory
      *
      * @return FormInterface
      */
-    public function create(ThreadInterface $thread)
+    public function create(?ThreadInterface $thread = null): FormInterface
     {
         $message = $this->createModelInstance();
         $message->setThread($thread);

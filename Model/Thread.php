@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Model;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 
 /**
  * Abstract thread model.
@@ -43,7 +46,7 @@ abstract class Thread implements ThreadInterface
     /**
      * Thread metadata.
      *
-     * @var Collection|ThreadMetadata[]
+     * @var Collection|AbstractThreadMetadata[]
      */
     protected $metadata;
 
@@ -57,7 +60,7 @@ abstract class Thread implements ThreadInterface
     /**
      * Date this thread was created at.
      *
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
@@ -89,7 +92,7 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
@@ -97,15 +100,17 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTime $createdAt): ThreadInterface
     {
         $this->createdAt = $createdAt;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCreatedBy()
+    public function getCreatedBy(): ?ParticipantInterface
     {
         return $this->createdBy;
     }
@@ -113,15 +118,17 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function setCreatedBy(ParticipantInterface $participant)
+    public function setCreatedBy(ParticipantInterface $participant): ThreadInterface
     {
         $this->createdBy = $participant;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -129,39 +136,47 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): ThreadInterface
     {
         $this->subject = $subject;
+
+        return $this;
     }
 
     /**
      * @return bool
      */
-    public function getIsSpam()
+    public function getIsSpam(): bool
     {
         return $this->isSpam;
     }
 
     /**
      * @param bool
+     *
+     * @return Thread
      */
-    public function setIsSpam($isSpam)
+    public function setIsSpam($isSpam): ThreadInterface
     {
         $this->isSpam = (bool) $isSpam;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addMessage(MessageInterface $message)
+    public function addMessage(MessageInterface $message): ThreadInterface
     {
         $this->messages->add($message);
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getMessages()
+    public function getMessages(): Collection
     {
         return $this->messages;
     }
@@ -169,7 +184,7 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function getFirstMessage()
+    public function getFirstMessage(): ?MessageInterface
     {
         return $this->getMessages()->first();
     }
@@ -177,7 +192,7 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function getLastMessage()
+    public function getLastMessage(): ?MessageInterface
     {
         return $this->getMessages()->last();
     }
@@ -185,7 +200,7 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function isDeletedByParticipant(ParticipantInterface $participant)
+    public function isDeletedByParticipant(ParticipantInterface $participant): bool
     {
         if ($meta = $this->getMetadataForParticipant($participant)) {
             return $meta->getIsDeleted();
@@ -197,10 +212,15 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function setIsDeletedByParticipant(ParticipantInterface $participant, $isDeleted)
+    public function setIsDeletedByParticipant(ParticipantInterface $participant, bool $isDeleted): ThreadInterface
     {
         if (!$meta = $this->getMetadataForParticipant($participant)) {
-            throw new \InvalidArgumentException(sprintf('No metadata exists for participant with id "%s"', $participant->getId()));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'No metadata exists for participant with id "%s"',
+                    $participant->getId()
+                )
+            );
         }
 
         $meta->setIsDeleted($isDeleted);
@@ -211,22 +231,26 @@ abstract class Thread implements ThreadInterface
                 $message->setIsReadByParticipant($participant, true);
             }
         }
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setIsDeleted($isDeleted)
+    public function setIsDeleted(bool $isDeleted): ThreadInterface
     {
         foreach ($this->getParticipants() as $participant) {
             $this->setIsDeletedByParticipant($participant, $isDeleted);
         }
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isReadByParticipant(ParticipantInterface $participant)
+    public function isReadByParticipant(ParticipantInterface $participant): bool
     {
         foreach ($this->getMessages() as $message) {
             if (!$message->isReadByParticipant($participant)) {
@@ -240,7 +264,7 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function setIsReadByParticipant(ParticipantInterface $participant, $isRead)
+    public function setIsReadByParticipant(ParticipantInterface $participant, bool $isRead): void
     {
         foreach ($this->getMessages() as $message) {
             $message->setIsReadByParticipant($participant, $isRead);
@@ -250,11 +274,14 @@ abstract class Thread implements ThreadInterface
     /**
      * Adds ThreadMetadata to the metadata collection.
      *
-     * @param ThreadMetadata $meta
+     * @param ThreadMetadataInterface $meta
+     * @return ThreadInterface
      */
-    public function addMetadata(ThreadMetadata $meta)
+    public function addMetadata(\FOS\MessageBundle\Model\ThreadMetadataInterface $meta): ThreadInterface
     {
         $this->metadata->add($meta);
+
+        return $this;
     }
 
     /**
@@ -262,12 +289,12 @@ abstract class Thread implements ThreadInterface
      *
      * @param ParticipantInterface $participant
      *
-     * @return ThreadMetadata
+     * @return AbstractThreadMetadata
      */
-    public function getMetadataForParticipant(ParticipantInterface $participant)
+    public function getMetadataForParticipant(ParticipantInterface $participant): ?AbstractThreadMetadata
     {
         foreach ($this->metadata as $meta) {
-            if ($meta->getParticipant()->getId() == $participant->getId()) {
+            if ($meta->getParticipant()->getId() === $participant->getId()) {
                 return $meta;
             }
         }
@@ -278,13 +305,13 @@ abstract class Thread implements ThreadInterface
     /**
      * {@inheritdoc}
      */
-    public function getOtherParticipants(ParticipantInterface $participant)
+    public function getOtherParticipants(ParticipantInterface $participant): array
     {
-        $otherParticipants = $this->getParticipants();
+        $otherParticipants = $this->getParticipants()->toArray();
 
         $key = array_search($participant, $otherParticipants, true);
 
-        if (false !== $key) {
+        if ($key !== false) {
             unset($otherParticipants[$key]);
         }
 

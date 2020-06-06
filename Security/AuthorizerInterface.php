@@ -20,7 +20,7 @@ interface AuthorizerInterface
      *
      * @return bool
      */
-    public function canSeeThread(ThreadInterface $thread);
+    public function canSeeThread(ThreadInterface $thread): bool;
 
     /**
      * Tells if the current participant is allowed
@@ -30,7 +30,7 @@ interface AuthorizerInterface
      *
      * @return bool
      */
-    public function canDeleteThread(ThreadInterface $thread);
+    public function canDeleteThread(ThreadInterface $thread): bool;
 
     /**
      * Tells if the current participant is allowed
@@ -40,5 +40,5 @@ interface AuthorizerInterface
      *
      * @return bool
      */
-    public function canMessageParticipant(ParticipantInterface $participant);
+    public function canMessageParticipant(ParticipantInterface $participant): bool;
 }

@@ -31,7 +31,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use FOS\MessageBundle\Entity\Message as BaseMessage;
+use FOS\MessageBundle\Entity\AbstractMessage as BaseMessage;
 
 /**
  * @ORM\Entity
@@ -82,7 +82,7 @@ MessageMetadata class
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\MessageBundle\Entity\MessageMetadata as BaseMessageMetadata;
+use FOS\MessageBundle\Entity\AbstractMessageMetadata as BaseMessageMetadata;
 
 /**
  * @ORM\Entity
@@ -124,7 +124,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use FOS\MessageBundle\Entity\Thread as BaseThread;
+use FOS\MessageBundle\Entity\AbstractThread as BaseThread;
 
 /**
  * @ORM\Entity
@@ -175,7 +175,7 @@ ThreadMetadata class
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\MessageBundle\Entity\ThreadMetadata as BaseThreadMetadata;
+use FOS\MessageBundle\Entity\AbstractThreadMetadata as BaseThreadMetadata;
 
 /**
  * @ORM\Entity

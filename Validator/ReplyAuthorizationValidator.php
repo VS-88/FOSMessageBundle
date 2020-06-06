@@ -1,14 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Validator;
 
+use FOS\MessageBundle\Model\MessageInterface;
 use FOS\MessageBundle\Security\AuthorizerInterface;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Class ReplyAuthorizationValidator
+ * @package FOS\MessageBundle\Validator
+ */
 class ReplyAuthorizationValidator extends ConstraintValidator
 {
+    use ExecutionContextAwareTrait;
+
     /**
      * @var AuthorizerInterface
      */
@@ -19,6 +27,11 @@ class ReplyAuthorizationValidator extends ConstraintValidator
      */
     protected $participantProvider;
 
+    /**
+     * ReplyAuthorizationValidator constructor.
+     * @param AuthorizerInterface $authorizer
+     * @param ParticipantProviderInterface $participantProvider
+     */
     public function __construct(AuthorizerInterface $authorizer, ParticipantProviderInterface $participantProvider)
     {
         $this->authorizer = $authorizer;
@@ -28,7 +41,7 @@ class ReplyAuthorizationValidator extends ConstraintValidator
     /**
      * Indicates whether the constraint is valid.
      *
-     * @param object     $value
+     * @param object|MessageInterface     $value
      * @param Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
@@ -38,7 +51,7 @@ class ReplyAuthorizationValidator extends ConstraintValidator
 
         foreach ($recipients as $recipient) {
             if (!$this->authorizer->canMessageParticipant($recipient)) {
-                $this->context->addViolation($constraint->message);
+                $this->getContext()->addViolation($constraint->message);
 
                 return;
             }

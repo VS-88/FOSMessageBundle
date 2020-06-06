@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormHandler;
 
@@ -22,10 +23,15 @@ class NewThreadMultipleMessageFormHandler extends AbstractMessageFormHandler
      *
      * @return MessageInterface the composed message ready to be sent
      */
-    public function composeMessage(AbstractMessage $message)
+    public function composeMessage(AbstractMessage $message): MessageInterface
     {
         if (!$message instanceof NewThreadMultipleMessage) {
-            throw new \InvalidArgumentException(sprintf('Message must be a NewThreadMultipleMessage instance, "%s" given', get_class($message)));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Message must be a NewThreadMultipleMessage instance, "%s" given',
+                    get_class($message)
+                )
+            );
         }
 
         return $this->composer->newThread()

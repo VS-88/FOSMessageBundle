@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace FOS\MessageBundle\MessageBuilder;
 
@@ -27,6 +28,11 @@ abstract class AbstractMessageBuilder
      */
     protected $thread;
 
+    /**
+     * AbstractMessageBuilder constructor.
+     * @param MessageInterface $message
+     * @param ThreadInterface $thread
+     */
     public function __construct(MessageInterface $message, ThreadInterface $thread)
     {
         $this->message = $message;
@@ -41,7 +47,7 @@ abstract class AbstractMessageBuilder
      *
      * @return MessageInterface the message created
      */
-    public function getMessage()
+    public function getMessage(): MessageInterface
     {
         return $this->message;
     }
@@ -51,7 +57,7 @@ abstract class AbstractMessageBuilder
      *
      * @return AbstractMessageBuilder (fluent interface)
      */
-    public function setBody($body)
+    public function setBody(string $body): AbstractMessageBuilder
     {
         $this->message->setBody($body);
 
@@ -63,7 +69,7 @@ abstract class AbstractMessageBuilder
      *
      * @return AbstractMessageBuilder (fluent interface)
      */
-    public function setSender(ParticipantInterface $sender)
+    public function setSender(ParticipantInterface $sender): AbstractMessageBuilder
     {
         $this->message->setSender($sender);
         $this->thread->addParticipant($sender);

@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\MessageBuilder;
 
-use Doctrine\Common\Collections\Collection;
 use FOS\MessageBundle\Model\ParticipantInterface;
 
 /**
@@ -19,7 +19,7 @@ class NewThreadMessageBuilder extends AbstractMessageBuilder
      *
      * @return NewThreadMessageBuilder (fluent interface)
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): NewThreadMessageBuilder
     {
         $this->thread->setSubject($subject);
 
@@ -31,23 +31,9 @@ class NewThreadMessageBuilder extends AbstractMessageBuilder
      *
      * @return NewThreadMessageBuilder (fluent interface)
      */
-    public function addRecipient(ParticipantInterface $recipient)
+    public function addRecipient(ParticipantInterface $recipient): NewThreadMessageBuilder
     {
         $this->thread->addParticipant($recipient);
-
-        return $this;
-    }
-
-    /**
-     * @param Collection $recipients
-     *
-     * @return NewThreadMessageBuilder
-     */
-    public function addRecipients(Collection $recipients)
-    {
-        foreach ($recipients as $recipient) {
-            $this->addRecipient($recipient);
-        }
 
         return $this;
     }

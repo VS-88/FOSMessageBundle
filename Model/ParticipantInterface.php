@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Model;
 
@@ -14,7 +15,7 @@ interface ParticipantInterface
     /**
      * Gets the unique identifier of the participant.
      *
-     * @return mixed
+     * @return int|string
      */
     public function getId();
 }

@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\ModelManager;
 
+use Doctrine\ORM\QueryBuilder;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ThreadInterface;
 
@@ -18,9 +20,10 @@ interface ThreadManagerInterface extends ReadableManagerInterface
     /**
      * Finds a thread by its ID.
      *
+     * @param $id
      * @return ThreadInterface or null
      */
-    public function findThreadById($id);
+    public function findThreadById($id): ?ThreadInterface;
 
     /**
      * Finds not deleted threads for a participant,
@@ -30,9 +33,9 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @param ParticipantInterface $participant
      *
-     * @return Builder a query builder suitable for pagination
+     * @return QueryBuilder a query builder suitable for pagination
      */
-    public function getParticipantInboxThreadsQueryBuilder(ParticipantInterface $participant);
+    public function getParticipantInboxThreadsQueryBuilder(ParticipantInterface $participant): QueryBuilder;
 
     /**
      * Finds not deleted threads for a participant,
@@ -44,7 +47,7 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @return ThreadInterface[]
      */
-    public function findParticipantInboxThreads(ParticipantInterface $participant);
+    public function findParticipantInboxThreads(ParticipantInterface $participant): array;
 
     /**
      * Finds not deleted threads from a participant,
@@ -54,9 +57,9 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @param ParticipantInterface $participant
      *
-     * @return Builder a query builder suitable for pagination
+     * @return QueryBuilder a query builder suitable for pagination
      */
-    public function getParticipantSentThreadsQueryBuilder(ParticipantInterface $participant);
+    public function getParticipantSentThreadsQueryBuilder(ParticipantInterface $participant): QueryBuilder;
 
     /**
      * Finds not deleted threads from a participant,
@@ -68,7 +71,7 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @return ThreadInterface[]
      */
-    public function findParticipantSentThreads(ParticipantInterface $participant);
+    public function findParticipantSentThreads(ParticipantInterface $participant): array;
 
     /**
      * Finds deleted threads from a participant,
@@ -76,9 +79,9 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @param ParticipantInterface $participant
      *
-     * @return Builder a query builder suitable for pagination
+     * @return QueryBuilder a query builder suitable for pagination
      */
-    public function getParticipantDeletedThreadsQueryBuilder(ParticipantInterface $participant);
+    public function getParticipantDeletedThreadsQueryBuilder(ParticipantInterface $participant): QueryBuilder;
 
     /**
      * Finds deleted threads from a participant,
@@ -88,7 +91,7 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @return ThreadInterface[]
      */
-    public function findParticipantDeletedThreads(ParticipantInterface $participant);
+    public function findParticipantDeletedThreads(ParticipantInterface $participant): array;
 
     /**
      * Finds not deleted threads for a participant,
@@ -98,9 +101,12 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      * @param ParticipantInterface $participant
      * @param string               $search
      *
-     * @return Builder a query builder suitable for pagination
+     * @return QueryBuilder a query builder suitable for pagination
      */
-    public function getParticipantThreadsBySearchQueryBuilder(ParticipantInterface $participant, $search);
+    public function getParticipantThreadsBySearchQueryBuilder(
+        ParticipantInterface $participant,
+        string $search
+    ): QueryBuilder;
 
     /**
      * Finds not deleted threads for a participant,
@@ -112,7 +118,7 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @return ThreadInterface[]
      */
-    public function findParticipantThreadsBySearch(ParticipantInterface $participant, $search);
+    public function findParticipantThreadsBySearch(ParticipantInterface $participant, string $search): array;
 
     /**
      * Gets threads created by a participant.
@@ -121,28 +127,32 @@ interface ThreadManagerInterface extends ReadableManagerInterface
      *
      * @return ThreadInterface[]
      */
-    public function findThreadsCreatedBy(ParticipantInterface $participant);
+    public function findThreadsCreatedBy(ParticipantInterface $participant): array;
 
     /**
      * Creates an empty comment thread instance.
      *
      * @return ThreadInterface
      */
-    public function createThread();
+    public function createThread(): ThreadInterface;
 
     /**
      * Saves a thread.
      *
      * @param ThreadInterface $thread
      * @param bool            $andFlush Whether to flush the changes (default true)
+     *
+     * @throws \Exception
      */
-    public function saveThread(ThreadInterface $thread, $andFlush = true);
+    public function saveThread(ThreadInterface $thread, bool $andFlush = true): void;
 
     /**
      * Deletes a thread
      * This is not participant deletion but real deletion.
      *
      * @param ThreadInterface $thread the thread to delete
+     *
+     * @throws \Exception
      */
-    public function deleteThread(ThreadInterface $thread);
+    public function deleteThread(ThreadInterface $thread): void;
 }

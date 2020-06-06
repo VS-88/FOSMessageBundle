@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\ModelManager;
 
@@ -12,15 +13,5 @@ use FOS\MessageBundle\Model\MessageInterface;
  */
 abstract class MessageManager implements MessageManagerInterface
 {
-    /**
-     * Creates an empty message instance.
-     *
-     * @return MessageInterface
-     */
-    public function createMessage()
-    {
-        $class = $this->getClass();
 
-        return new $class();
-    }
 }

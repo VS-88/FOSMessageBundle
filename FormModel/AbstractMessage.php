@@ -1,7 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormModel;
 
+/**
+ * Class AbstractMessage
+ * @package FOS\MessageBundle\FormModel
+ */
 abstract class AbstractMessage
 {
     /**
@@ -12,7 +17,7 @@ abstract class AbstractMessage
     /**
      * @return string
      */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
@@ -20,7 +25,7 @@ abstract class AbstractMessage
     /**
      * @param string
      */
-    public function setBody($body)
+    public function setBody(string $body)
     {
         $this->body = $body;
     }

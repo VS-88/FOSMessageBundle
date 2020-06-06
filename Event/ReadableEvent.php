@@ -6,6 +6,10 @@ namespace FOS\MessageBundle\Event;
 use FOS\MessageBundle\Model\ReadableInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Class ReadableEvent
+ * @package FOS\MessageBundle\Event
+ */
 class ReadableEvent extends Event
 {
     /**
@@ -13,6 +17,10 @@ class ReadableEvent extends Event
      */
     private $readable;
 
+    /**
+     * ReadableEvent constructor.
+     * @param ReadableInterface $readable
+     */
     public function __construct(ReadableInterface $readable)
     {
         $this->readable = $readable;

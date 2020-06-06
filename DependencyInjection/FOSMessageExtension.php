@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\DependencyInjection;
 
@@ -6,30 +7,42 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * Class FOSMessageExtension
+ * @package FOS\MessageBundle\DependencyInjection
+ */
 class FOSMessageExtension extends Extension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    /**
+     * @param array $configs
+     * @param ContainerBuilder $container
+     *
+     * @throws \Exception
+     */
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $processor = new Processor();
         $configuration = new Configuration();
 
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        if (!in_array(strtolower($config['db_driver']), array('orm', 'mongodb'))) {
+        if (!in_array(strtolower($config['db_driver']), ['orm', 'mongodb'])) {
             throw new \InvalidArgumentException(sprintf('Invalid db driver "%s".', $config['db_driver']));
         }
 
-        $loader->load(sprintf('%s.xml', $config['db_driver']));
-        $loader->load('config.xml');
-        $loader->load('form.xml');
-        $loader->load('validator.xml');
-        $loader->load('spam_detection.xml');
+        $loader->load(sprintf('%s.yaml', $config['db_driver']));
+        $loader->load('config.yaml');
+        $loader->load('form.yaml');
+        $loader->load('validator.yaml');
+        $loader->load('spam_detection.yaml');
+        $loader->load('template_paths.yaml');
+        $loader->load('controllers.yaml');
 
         $container->setParameter('fos_message.message_class', $config['message_class']);
         $container->setParameter('fos_message.thread_class', $config['thread_class']);
@@ -58,7 +71,11 @@ class FOSMessageExtension extends Extension
         $replyFormType = $config['reply_form']['type'];
 
         if (!class_exists($newThreadFormType)) {
-            @trigger_error('Using a service reference in configuration key "fos_message.new_thread_form.type" is deprecated since version 1.2 and will be removed in 2.0. Use the class name of your form type instead.', E_USER_DEPRECATED);
+            @trigger_error(
+                'Using a service reference in configuration key "fos_message.new_thread_form.type" is deprecated since '
+                . 'version 1.2 and will be removed in 2.0. Use the class name of your form type instead.',
+                E_USER_DEPRECATED
+            );
 
             // Old syntax (service reference)
             $container->setAlias('fos_message.new_thread_form.type', new Alias($newThreadFormType, true));
@@ -69,7 +86,11 @@ class FOSMessageExtension extends Extension
         }
 
         if (!class_exists($replyFormType)) {
-            @trigger_error('Using a service reference in configuration key "fos_message.reply_form.type" is deprecated since version 1.2 and will be removed in 2.0. Use the class name of your form type instead.', E_USER_DEPRECATED);
+            @trigger_error(
+                'Using a service reference in configuration key "fos_message.reply_form.type" is deprecated '
+                . 'since version 1.2 and will be removed in 2.0. Use the class name of your form type instead.',
+                E_USER_DEPRECATED
+            );
 
             // Old syntax (service reference)
             $container->setAlias('fos_message.reply_form.type', new Alias($replyFormType, true));
@@ -79,15 +100,28 @@ class FOSMessageExtension extends Extension
                 ->replaceArgument(1, $replyFormType);
         }
 
-        $container->setAlias('fos_message.new_thread_form.factory', new Alias($config['new_thread_form']['factory'], true));
-        $container->setAlias('fos_message.new_thread_form.handler', new Alias($config['new_thread_form']['handler'], true));
+        $container->setAlias(
+            'fos_message.new_thread_form.factory',
+            new Alias(
+                $config['new_thread_form']['factory'],
+                true
+            )
+        );
+        $container->setAlias(
+            'fos_message.new_thread_form.handler',
+            new Alias(
+                $config['new_thread_form']['handler'],
+                true
+            )
+        );
+
         $container->setAlias('fos_message.reply_form.factory', new Alias($config['reply_form']['factory'], true));
         $container->setAlias('fos_message.reply_form.handler', new Alias($config['reply_form']['handler'], true));
 
         $container->setAlias('fos_message.search_query_factory', new Alias($config['search']['query_factory'], true));
         $container->setAlias('fos_message.search_finder', new Alias($config['search']['finder'], true));
         $container->getDefinition('fos_message.search_query_factory.default')
-            ->replaceArgument(1, $config['search']['query_parameter']);
+            ->replaceArgument(0, $config['search']['query_parameter']);
 
         $container->getDefinition('fos_message.recipients_data_transformer')
             ->replaceArgument(0, new Reference($config['user_transformer']));

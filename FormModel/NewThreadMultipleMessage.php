@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormModel;
 
@@ -24,6 +25,9 @@ class NewThreadMultipleMessage extends AbstractMessage
      */
     protected $subject;
 
+    /**
+     * NewThreadMultipleMessage constructor.
+     */
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
@@ -32,7 +36,7 @@ class NewThreadMultipleMessage extends AbstractMessage
     /**
      * @return string
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -40,7 +44,7 @@ class NewThreadMultipleMessage extends AbstractMessage
     /**
      * @param string $subject
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): void
     {
         $this->subject = $subject;
     }
@@ -48,7 +52,7 @@ class NewThreadMultipleMessage extends AbstractMessage
     /**
      * @return ArrayCollection
      */
-    public function getRecipients()
+    public function getRecipients(): ArrayCollection
     {
         return $this->recipients;
     }
@@ -58,7 +62,7 @@ class NewThreadMultipleMessage extends AbstractMessage
      *
      * @param ParticipantInterface $recipient
      */
-    public function addRecipient(ParticipantInterface $recipient)
+    public function addRecipient(ParticipantInterface $recipient): void
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients->add($recipient);
@@ -70,7 +74,7 @@ class NewThreadMultipleMessage extends AbstractMessage
      *
      * @param ParticipantInterface $recipient
      */
-    public function removeRecipient(ParticipantInterface $recipient)
+    public function removeRecipient(ParticipantInterface $recipient): void
     {
         $this->recipients->removeElement($recipient);
     }

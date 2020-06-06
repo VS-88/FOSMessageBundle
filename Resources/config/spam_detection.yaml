@@ -1,0 +1,4 @@
+services:
+  fos_message.noop_spam_detector:
+    class: FOS\MessageBundle\SpamDetection\NoopSpamDetector
+    public: false

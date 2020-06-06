@@ -1,10 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormFactory;
 
 use FOS\MessageBundle\FormModel\AbstractMessage;
+use FOS\MessageBundle\Model\ThreadInterface;
+use InvalidArgumentException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Instanciates message forms.
@@ -41,10 +45,21 @@ abstract class AbstractMessageFormFactory
      */
     protected $messageClass;
 
-    public function __construct(FormFactoryInterface $formFactory, $formType, $formName, $messageClass)
-    {
+    /**
+     * AbstractMessageFormFactory constructor.
+     * @param FormFactoryInterface $formFactory
+     * @param $formType
+     * @param $formName
+     * @param $messageClass
+     */
+    public function __construct(
+        FormFactoryInterface $formFactory,
+        string $formType,
+        string $formName,
+        string $messageClass
+    ) {
         if (!is_string($formType) && !$formType instanceof AbstractType) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Form type provided is not valid (class name or instance of %s expected, %s given)',
                 'Symfony\Component\Form\AbstractType',
                 is_object($formType) ? get_class($formType) : gettype($formType)
@@ -58,11 +73,18 @@ abstract class AbstractMessageFormFactory
     }
 
     /**
+     * @param ThreadInterface $thread
+     *
+     * @return FormInterface
+     */
+    abstract public function create(?ThreadInterface $thread = null): FormInterface;
+
+    /**
      * Creates a new instance of the form model.
      *
      * @return AbstractMessage
      */
-    protected function createModelInstance()
+    protected function createModelInstance(): AbstractMessage
     {
         $class = $this->messageClass;
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\Twig\Extension;
 
@@ -6,13 +7,14 @@ use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Provider\ProviderInterface;
 use FOS\MessageBundle\Security\AuthorizerInterface;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
+use FOS\MessageBundle\Tests\AbstractTestCase;
 use FOS\MessageBundle\Twig\Extension\MessageExtension;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Testfile for MessageExtension.
  */
-class MessageExtensionTest extends TestCase
+class MessageExtensionTest extends AbstractTestCase
 {
     /**
      * @var MessageExtension

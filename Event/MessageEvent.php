@@ -5,6 +5,10 @@ namespace FOS\MessageBundle\Event;
 
 use FOS\MessageBundle\Model\MessageInterface;
 
+/**
+ * Class MessageEvent
+ * @package FOS\MessageBundle\Event
+ */
 class MessageEvent extends ThreadEvent
 {
     /**
@@ -12,6 +16,10 @@ class MessageEvent extends ThreadEvent
      */
     private $message;
 
+    /**
+     * MessageEvent constructor.
+     * @param MessageInterface $message
+     */
     public function __construct(MessageInterface $message)
     {
         parent::__construct($message->getThread());

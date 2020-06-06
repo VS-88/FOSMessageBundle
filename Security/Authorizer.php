@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Security;
 
@@ -17,6 +18,10 @@ class Authorizer implements AuthorizerInterface
      */
     protected $participantProvider;
 
+    /**
+     * Authorizer constructor.
+     * @param ParticipantProviderInterface $participantProvider
+     */
     public function __construct(ParticipantProviderInterface $participantProvider)
     {
         $this->participantProvider = $participantProvider;
@@ -25,15 +30,16 @@ class Authorizer implements AuthorizerInterface
     /**
      * {@inheritdoc}
      */
-    public function canSeeThread(ThreadInterface $thread)
+    public function canSeeThread(ThreadInterface $thread): bool
     {
-        return $this->getAuthenticatedParticipant() && $thread->isParticipant($this->getAuthenticatedParticipant());
+        $participant = $this->participantProvider->getAuthenticatedParticipant();
+        return $thread->isParticipant($participant);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function canDeleteThread(ThreadInterface $thread)
+    public function canDeleteThread(ThreadInterface $thread): bool
     {
         return $this->canSeeThread($thread);
     }
@@ -41,18 +47,8 @@ class Authorizer implements AuthorizerInterface
     /**
      * {@inheritdoc}
      */
-    public function canMessageParticipant(ParticipantInterface $participant)
+    public function canMessageParticipant(ParticipantInterface $participant): bool
     {
         return true;
-    }
-
-    /**
-     * Gets the current authenticated user.
-     *
-     * @return ParticipantInterface
-     */
-    protected function getAuthenticatedParticipant()
-    {
-        return $this->participantProvider->getAuthenticatedParticipant();
     }
 }

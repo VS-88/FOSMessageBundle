@@ -1,0 +1,8 @@
+parameters:
+  template_paths.deleted: "@@FOSMessage/Message/deleted.html.twig"
+  template_paths.inbox: "@@FOSMessage/Message/inbox.html.twig"
+  template_paths.new_thread: "@@FOSMessage/Message/newThread.html.twig"
+  template_paths.search: "@@FOSMessage/Message/search.html.twig"
+  template_paths.sent: "@@FOSMessage/Message/sent.html.twig"
+  template_paths.view_thread: "@@FOSMessage/Message/thread.html.twig"
+  template_paths.thread_list: "@@FOSMessage/Message/threads_list.html.twig"

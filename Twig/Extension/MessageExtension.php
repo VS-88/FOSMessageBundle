@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Twig\Extension;
 
@@ -11,6 +12,10 @@ use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * Class MessageExtension
+ * @package FOS\MessageBundle\Twig\Extension
+ */
 class MessageExtension extends AbstractExtension
 {
     protected $participantProvider;
@@ -19,8 +24,17 @@ class MessageExtension extends AbstractExtension
 
     protected $nbUnreadMessagesCache;
 
-    public function __construct(ParticipantProviderInterface $participantProvider, ProviderInterface $provider, AuthorizerInterface $authorizer)
-    {
+    /**
+     * MessageExtension constructor.
+     * @param ParticipantProviderInterface $participantProvider
+     * @param ProviderInterface $provider
+     * @param AuthorizerInterface $authorizer
+     */
+    public function __construct(
+        ParticipantProviderInterface $participantProvider,
+        ProviderInterface $provider,
+        AuthorizerInterface $authorizer
+    ) {
         $this->participantProvider = $participantProvider;
         $this->provider = $provider;
         $this->authorizer = $authorizer;
@@ -31,12 +45,12 @@ class MessageExtension extends AbstractExtension
      */
     public function getFunctions()
     {
-        return array(
-            new TwigFunction('fos_message_is_read', array($this, 'isRead')),
-            new TwigFunction('fos_message_nb_unread', array($this, 'getNbUnread')),
-            new TwigFunction('fos_message_can_delete_thread', array($this, 'canDeleteThread')),
-            new TwigFunction('fos_message_deleted_by_participant', array($this, 'isThreadDeletedByParticipant')),
-        );
+        return [
+            new TwigFunction('fos_message_is_read', [$this, 'isRead']),
+            new TwigFunction('fos_message_nb_unread', [$this, 'getNbUnread']),
+            new TwigFunction('fos_message_can_delete_thread', [$this, 'canDeleteThread']),
+            new TwigFunction('fos_message_deleted_by_participant', [$this, 'isThreadDeletedByParticipant']),
+        ];
     }
 
     /**

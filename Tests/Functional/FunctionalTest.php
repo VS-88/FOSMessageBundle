@@ -1,18 +1,63 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\Functional;
 
+/**
+ * Class FunctionalTest
+ */
 class FunctionalTest extends WebTestCase
 {
-    public function testController()
+    protected function setUp(): void
     {
-        $client = self::createClient(array(), array(
+        parent::setUp();
+    }
+
+    /**
+     * @test
+     */
+    public function controllerSent(): void
+    {
+        $client = self::createClient([], [
             'PHP_AUTH_USER' => 'guilhem',
             'PHP_AUTH_PW' => 'pass',
-        ));
-        $crawler = $client->request('GET', '/sent');
+        ]);
+
+        $client->request('GET', '/sent');
 
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
+        static::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function controllerInbox(): void
+    {
+        $client = self::createClient([], [
+            'PHP_AUTH_USER' => 'guilhem',
+            'PHP_AUTH_PW' => 'pass',
+        ]);
+
+        $client->request('GET', '/inbox');
+
+        $response = $client->getResponse();
+        static::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function controllerDeleted(): void
+    {
+        $client = self::createClient([], [
+            'PHP_AUTH_USER' => 'guilhem',
+            'PHP_AUTH_PW' => 'pass',
+        ]);
+
+        $client->request('GET', '/deleted');
+
+        $response = $client->getResponse();
+        static::assertEquals(200, $response->getStatusCode());
     }
 }

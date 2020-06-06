@@ -1,0 +1,50 @@
+<?php
+declare(strict_types=1);
+
+namespace FOS\MessageBundle\Tests\Validator;
+
+use FOS\MessageBundle\Tests\AbstractTestCase;
+use FOS\MessageBundle\Validator\Authorization;
+
+/**
+ * Class Authorization
+ * @package FOS\MessageBundle\Validator
+ */
+class AuthorizationTest extends AbstractTestCase
+{
+    /**
+     * @var Authorization
+     */
+    private $service;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = new Authorization();
+    }
+
+    /**
+     * @test
+     */
+    public function validatedBy(): void
+    {
+        self::assertSame('fos_message.validator.authorization', $this->service->validatedBy());
+    }
+
+    /**
+     * @test
+     */
+    public function getTargets(): void
+    {
+        self::assertSame($this->service::PROPERTY_CONSTRAINT, $this->service->getTargets());
+    }
+
+    /**
+     * @test
+     */
+    public function message(): void
+    {
+        self::assertSame('fos_message.not_authorized', $this->service->message);
+    }
+}

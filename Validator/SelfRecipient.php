@@ -1,14 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Class SelfRecipient
+ * @package FOS\MessageBundle\Validator
+ */
 class SelfRecipient extends Constraint
 {
     public $message = 'fos_message.self_recipient';
 
-    public function validatedBy()
+    /**
+     * @return string
+     */
+    public function validatedBy(): string
     {
         return 'fos_message.validator.self_recipient';
     }
@@ -18,6 +26,6 @@ class SelfRecipient extends Constraint
      */
     public function getTargets()
     {
-        return self::PROPERTY_CONSTRAINT;
+        return static::PROPERTY_CONSTRAINT;
     }
 }

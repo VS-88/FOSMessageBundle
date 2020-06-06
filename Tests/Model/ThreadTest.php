@@ -1,10 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class ThreadTest
+ * @package FOS\MessageBundle\Tests\Model
+ */
 class ThreadTest extends TestCase
 {
     public function testGetOtherParticipants()
@@ -16,7 +22,7 @@ class ThreadTest extends TestCase
         $thread = $this->getMockForAbstractClass('FOS\MessageBundle\Model\Thread');
         $thread->expects($this->atLeastOnce())
             ->method('getParticipants')
-            ->will($this->returnValue(array($u1, $u2, $u3)));
+            ->will($this->returnValue(new ArrayCollection(array($u1, $u2, $u3))));
 
         $toIds = function (array $participants) {
             return array_map(function (ParticipantInterface $participant) {
