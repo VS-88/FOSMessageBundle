@@ -5,6 +5,7 @@ namespace FOS\MessageBundle\Tests\Functional;
 
 use FOS\MessageBundle\FOSMessageBundle;
 use FOS\MessageBundle\Tests\Functional\Entity\Message;
+use FOS\MessageBundle\Tests\Functional\Entity\MessageAttachment;
 use FOS\MessageBundle\Tests\Functional\Entity\Thread;
 use FOS\MessageBundle\Tests\Functional\Entity\UserProvider;
 use FOS\MessageBundle\Tests\Functional\EntityManager\MessageManager;
@@ -77,6 +78,8 @@ class TestKernel extends Kernel
             'db_driver' => 'orm',
             'thread_class' => Thread::class,
             'message_class' => Message::class,
+            'message_attachment_class' => MessageAttachment::class,
+            'path_to_message_attachments_dir' => 'some_path'
         ]);
 
         $c->register('fos_user.user_to_username_transformer', UserToUsernameTransformer::class);

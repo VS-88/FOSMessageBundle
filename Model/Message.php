@@ -58,12 +58,18 @@ abstract class Message implements MessageInterface
     protected $metadata;
 
     /**
+     * @var Collection|MessageAttachmentInterface[]
+     */
+    protected $messageAttachments;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
-        $this->createdAt = new DateTime();
-        $this->metadata = new ArrayCollection();
+        $this->createdAt          = new DateTime();
+        $this->metadata           = new ArrayCollection();
+        $this->messageAttachments = new ArrayCollection();
     }
 
     /**
@@ -157,6 +163,47 @@ abstract class Message implements MessageInterface
         $this->metadata->add($meta);
 
         return $this;
+    }
+
+    /**
+     * @param MessageAttachmentInterface $messageAttachment
+     * @return MessageInterface
+     */
+    public function addMessageAttachment(MessageAttachmentInterface $messageAttachment): MessageInterface
+    {
+        $this->metadata->add($messageAttachment);
+
+        return $this;
+    }
+
+    /**
+     * @param array $fileNames
+     * @param MessageAttachmentFactoryInterface $messageAttachmentFactory
+     *
+     * @return MessageInterface
+     */
+    public function addMessageAttachments(
+        array $fileNames,
+        MessageAttachmentFactoryInterface $messageAttachmentFactory
+    ): MessageInterface {
+        foreach ($fileNames as $fileName) {
+            $attachment = $messageAttachmentFactory->create();
+
+            $attachment->setFileName($fileName);
+            $attachment->setMessage($this);
+
+            $this->addMessageAttachment($attachment);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MessageAttachmentInterface[]
+     */
+    public function getMessageAttachments(): Collection
+    {
+        return $this->messageAttachments;
     }
 
     /**

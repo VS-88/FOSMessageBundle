@@ -43,9 +43,12 @@ class FOSMessageExtension extends Extension
         $loader->load('spam_detection.yaml');
         $loader->load('template_paths.yaml');
         $loader->load('controllers.yaml');
+        $loader->load('utils.yaml');
 
         $container->setParameter('fos_message.message_class', $config['message_class']);
         $container->setParameter('fos_message.thread_class', $config['thread_class']);
+        $container->setParameter('fos_message.message_attachment_class', $config['message_attachment_class']);
+        $container->setParameter('fos_message.path_to_message_attachments_dir', $config['path_to_message_attachments_dir']);
 
         $container->setParameter('fos_message.new_thread_form.model', $config['new_thread_form']['model']);
         $container->setParameter('fos_message.new_thread_form.name', $config['new_thread_form']['name']);

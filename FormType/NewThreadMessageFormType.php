@@ -5,6 +5,7 @@ namespace FOS\MessageBundle\FormType;
 
 use FOS\MessageBundle\Util\LegacyFormHelper;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,6 +18,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
  */
 class NewThreadMessageFormType extends AbstractType
 {
+    public const FORM_CHILD_RECIPIENT   = 'recipient';
+    public const FORM_CHILD_SUBJECT     = 'subject';
+    public const FORM_CHILD_BODY        = 'body';
+    public const FORM_CHILD_ATTACHMENTS = 'recipient';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -35,6 +41,15 @@ class NewThreadMessageFormType extends AbstractType
             ->add('body', LegacyFormHelper::getType(TextareaType::class), [
                 'label' => 'body',
                 'translation_domain' => 'FOSMessageBundle',
+            ])
+            ->add('attachments', FileType::class, [
+                'label' => 'attachment',
+                'multiple' => true,
+                'attr'     => [
+                    'accept' => 'image/*',
+                    'multiple' => 'multiple'
+                ],
+                'required' => false,
             ]);
     }
 

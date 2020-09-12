@@ -3,12 +3,15 @@ declare(strict_types = 1);
 
 namespace FOS\MessageBundle\FormHandler;
 
+use Exception;
 use FOS\MessageBundle\Composer\ComposerInterface;
 use FOS\MessageBundle\FormModel\AbstractMessage;
+use FOS\MessageBundle\Model\MessageAttachmentFactoryInterface;
 use FOS\MessageBundle\Model\MessageInterface;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use FOS\MessageBundle\Sender\SenderInterface;
+use FOS\MessageBundle\Utils\UploadedFileManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,18 +38,42 @@ abstract class AbstractMessageFormHandler
     protected $participantProvider;
 
     /**
-     * @param ComposerInterface            $composer
-     * @param SenderInterface              $sender
+     * @var UploadedFileManagerInterface
+     */
+    protected $uploadedFileManager;
+
+    /**
+     * @var string
+     */
+    protected $pathToAttachmentsDir;
+
+    /**
+     * @var MessageAttachmentFactoryInterface
+     */
+    protected $messageAttachmentFactory;
+
+    /**
+     * @param ComposerInterface $composer
+     * @param SenderInterface $sender
      * @param ParticipantProviderInterface $participantProvider
+     * @param UploadedFileManagerInterface $uploadedFileManager
+     * @param MessageAttachmentFactoryInterface $messageAttachmentFactory
+     * @param string $pathToAttachmentsDir
      */
     public function __construct(
         ComposerInterface $composer,
         SenderInterface $sender,
-        ParticipantProviderInterface $participantProvider
+        ParticipantProviderInterface $participantProvider,
+        UploadedFileManagerInterface $uploadedFileManager,
+        MessageAttachmentFactoryInterface $messageAttachmentFactory,
+        string $pathToAttachmentsDir
     ) {
         $this->composer = $composer;
         $this->sender = $sender;
         $this->participantProvider = $participantProvider;
+        $this->uploadedFileManager = $uploadedFileManager;
+        $this->messageAttachmentFactory = $messageAttachmentFactory;
+        $this->pathToAttachmentsDir = $pathToAttachmentsDir;
     }
 
     /**
@@ -57,6 +84,7 @@ abstract class AbstractMessageFormHandler
      * @param Request $request
      *
      * @return MessageInterface|null the sent message if the form is bound and valid, false otherwise
+     * @throws Exception
      */
     public function process(FormInterface $form, Request $request): ?MessageInterface
     {
@@ -67,7 +95,21 @@ abstract class AbstractMessageFormHandler
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $message = $this->composeMessage($form->getData());
+            /**
+             * @var AbstractMessage $formMessage
+             */
+            $formMessage = $form->getData();
+
+            $message = $this->composeMessage($formMessage);
+
+            $fileNames = $this->uploadedFileManager->moveToDirAndReturnFileNames(
+                $formMessage->getAttachments(),
+                'attachment',
+                $this->pathToAttachmentsDir
+            );
+
+            $message->addMessageAttachments($fileNames, $this->messageAttachmentFactory);
+
             $this->sender->send($message);
 
             return $message;

@@ -3,13 +3,13 @@
 <phpunit bootstrap="./vendor/autoload.php">
     <php>
         <ini name="xdebug.max_nesting_level" value="200" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled" />
     </php>
     <testsuites>
         <testsuite name="FOSMessageBundle">
             <directory suffix="Test.php">./Tests</directory>
         </testsuite>
     </testsuites>
-
     <filter>
         <whitelist>
             <directory>./</directory>

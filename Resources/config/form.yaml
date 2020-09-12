@@ -36,6 +36,9 @@ services:
       - '@fos_message.composer'
       - '@fos_message.sender'
       - '@fos_message.participant_provider'
+      - '@utils.uploaded_file_manager'
+      - '@fos_message.message_attachments.entity.factory'
+      - '%fos_message.path_to_message_attachments_dir%'
 
   fos_message.new_thread_multiple_form.handler:
     class: FOS\MessageBundle\FormHandler\NewThreadMultipleMessageFormHandler
@@ -44,6 +47,9 @@ services:
       - '@fos_message.composer'
       - '@fos_message.sender'
       - '@fos_message.participant_provider'
+      - '@utils.uploaded_file_manager'
+      - '@fos_message.message_attachments.entity.factory'
+      - '%fos_message.path_to_message_attachments_dir%'
 
   fos_message.reply_form.handler.default:
     class: FOS\MessageBundle\FormHandler\ReplyMessageFormHandler
@@ -52,6 +58,9 @@ services:
       - '@fos_message.composer'
       - '@fos_message.sender'
       - '@fos_message.participant_provider'
+      - '@utils.uploaded_file_manager'
+      - '@fos_message.message_attachments.entity.factory'
+      - '%fos_message.path_to_message_attachments_dir%'
 
   fos_message.recipients_data_transformer:
     class: FOS\MessageBundle\DataTransformer\RecipientsDataTransformer

@@ -8,13 +8,17 @@ use FOS\MessageBundle\FormHandler\NewThreadMessageFormHandler;
 use FOS\MessageBundle\FormHandler\ReplyMessageFormHandler;
 use FOS\MessageBundle\FormModel\ReplyMessage;
 use FOS\MessageBundle\MessageBuilder\AbstractMessageBuilder;
+use FOS\MessageBundle\Model\MessageAttachmentFactoryInterface;
 use FOS\MessageBundle\Model\MessageInterface;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ThreadInterface;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use FOS\MessageBundle\Sender\SenderInterface;
 use FOS\MessageBundle\Tests\AbstractTestCase;
+use FOS\MessageBundle\Utils\UploadedFileManagerInterface;
+use Mockery;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -42,19 +46,37 @@ class ReplyMessageFormHandlerTest extends AbstractTestCase
      * @var NewThreadMessageFormHandler
      */
     private $service;
+    /**
+     * @var UploadedFileManagerInterface|Mockery\MockInterface
+     */
+    private $uploadedFileManager;
+    /**
+     * @var MessageAttachmentFactoryInterface|Mockery\MockInterface
+     */
+    private $messageAttachmentFactory;
+    /**
+     * @var string
+     */
+    private $pathToAttachmentsDir;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->composer = \Mockery::mock(ComposerInterface::class);
-        $this->sender = \Mockery::mock(SenderInterface::class);
-        $this->participantProvider = \Mockery::mock(ParticipantProviderInterface::class);
+        $this->composer = Mockery::mock(ComposerInterface::class);
+        $this->sender = Mockery::mock(SenderInterface::class);
+        $this->participantProvider = Mockery::mock(ParticipantProviderInterface::class);
+        $this->uploadedFileManager      = Mockery::mock(UploadedFileManagerInterface::class);
+        $this->messageAttachmentFactory = Mockery::mock(MessageAttachmentFactoryInterface::class);
+        $this->pathToAttachmentsDir     = '/path/to/attachments/dir';
 
         $this->service = new ReplyMessageFormHandler(
             $this->composer,
             $this->sender,
-            $this->participantProvider
+            $this->participantProvider,
+            $this->uploadedFileManager,
+            $this->messageAttachmentFactory,
+            $this->pathToAttachmentsDir
         );
     }
 
@@ -63,31 +85,47 @@ class ReplyMessageFormHandlerTest extends AbstractTestCase
      */
     public function process(): void
     {
-        $request = \Mockery::mock(Request::class);
+        $request = Mockery::mock(Request::class);
         $request->shouldReceive('getMethod')->once()->andReturn('POST');
 
-        $form = \Mockery::mock(FormInterface::class);
+        $form = Mockery::mock(FormInterface::class);
 
-        $message = \Mockery::mock(ReplyMessage::class);
+        $message = Mockery::mock(ReplyMessage::class);
 
 
-        $recipient = \Mockery::mock(ParticipantInterface::class);
-        $sender = \Mockery::mock(ParticipantInterface::class);
+        $recipient = Mockery::mock(ParticipantInterface::class);
+        $sender = Mockery::mock(ParticipantInterface::class);
+        $attachment = Mockery::mock(UploadedFile::class);
 
-        $thread = \Mockery::mock(ThreadInterface::class);
+        $thread = Mockery::mock(ThreadInterface::class);
 
         $message->shouldReceive('getBody')->once()->andReturn('body');
         $message->shouldReceive('getThread')->once()->andReturn($thread);
+        $message->shouldReceive('getAttachments')->once()->andReturn(...[[$attachment]]);
 
         $form->shouldReceive('handleRequest')->once()->with($request);
         $form->shouldReceive('isValid')->once()->andReturnTrue();
         $form->shouldReceive('getData')->once()->andReturn($message);
 
+        $savedFilename = 'some-file-name';
+
+        $this->uploadedFileManager
+            ->shouldReceive('moveToDirAndReturnFileNames')
+            ->once()
+            ->with(
+                ...[
+                    [$attachment],
+                    'attachment',
+                    $this->pathToAttachmentsDir
+                ]
+            )
+            ->andReturn(...[[$savedFilename]]);
+
         $this->participantProvider->shouldReceive('getAuthenticatedParticipant')
             ->once()
             ->andReturn($sender);
 
-        $builder = \Mockery::mock(AbstractMessageBuilder::class);
+        $builder = Mockery::mock(AbstractMessageBuilder::class);
 
         $this->composer->shouldReceive('reply')
             ->once($thread)
@@ -103,11 +141,23 @@ class ReplyMessageFormHandlerTest extends AbstractTestCase
             ->with('body')
             ->andReturn($builder);
 
-        $messageEntity = \Mockery::mock(MessageInterface::class);
+        $messageEntity = Mockery::mock(MessageInterface::class);
+
+
+        $messageEntity->shouldReceive('addMessageAttachments')
+            ->once()
+            ->with(
+                ...[
+                    [$savedFilename],
+                    $this->messageAttachmentFactory
+                ]
+            )
+            ->andReturn(...[$messageEntity]);
 
         $builder->shouldReceive('getMessage')
             ->once()
-            ->andReturn($messageEntity);
+            ->andReturn(...[$messageEntity]);
+
 
         $this->sender->shouldReceive('send')->once()->with($messageEntity);
 

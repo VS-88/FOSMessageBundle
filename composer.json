@@ -22,7 +22,8 @@
         "symfony/form": "^5.0",
         "symfony/framework-bundle": "^5.0",
         "symfony/twig-bundle": "^5.0",
-        "symfony/asset": "^5.0"
+        "symfony/asset": "^5.0",
+        "ramsey/uuid": "^4.1"
     },
     "require-dev": {
         "symfony/validator": "^5.0",

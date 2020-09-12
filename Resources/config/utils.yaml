@@ -1,0 +1,8 @@
+services:
+  utils.uuid.factory:
+    class: Ramsey\Uuid\UuidFactory
+
+  utils.uploaded_file_manager:
+    class: FOS\MessageBundle\Utils\UploadedFileManager
+    arguments:
+      - '@utils.uuid.factory'

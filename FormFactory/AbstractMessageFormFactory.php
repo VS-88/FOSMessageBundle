@@ -54,7 +54,7 @@ abstract class AbstractMessageFormFactory
      */
     public function __construct(
         FormFactoryInterface $formFactory,
-        string $formType,
+        $formType,
         string $formName,
         string $messageClass
     ) {

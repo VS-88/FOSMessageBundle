@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace FOS\MessageBundle\Model;
 
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Message model.
@@ -53,4 +54,26 @@ interface MessageInterface extends ReadableInterface
      * @param  ParticipantInterface
      */
     public function setSender(ParticipantInterface $sender): self;
+
+    /**
+     * @param MessageAttachmentInterface $messageAttachment
+     * @return MessageInterface
+     */
+    public function addMessageAttachment(MessageAttachmentInterface $messageAttachment): MessageInterface;
+
+    /**
+     * @param array $fileNames
+     * @param MessageAttachmentFactoryInterface $messageAttachmentFactory
+     *
+     * @return MessageInterface
+     */
+    public function addMessageAttachments(
+        array $fileNames,
+        MessageAttachmentFactoryInterface $messageAttachmentFactory
+    ): MessageInterface;
+
+    /**
+     * @return Collection|MessageAttachmentInterface[]
+     */
+    public function getMessageAttachments(): Collection;
 }
