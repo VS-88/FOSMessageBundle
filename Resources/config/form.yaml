@@ -72,3 +72,15 @@ services:
     tags:
       - { name: form.type, alias: recipients_selector }
     arguments: ['@fos_message.recipients_data_transformer']
+
+
+  fos_message.recipient_data_transformer:
+    class: FOS\MessageBundle\DataTransformer\SingleRecipientDataTransformer
+    public: false
+    arguments: ['@fos_user.user_to_username_transformer']
+
+  fos_message.recipient_selector:
+    class: FOS\MessageBundle\FormType\RecipientType
+    tags:
+      - { name: form.type, alias: recipient_selector }
+    arguments: ['@fos_message.recipient_data_transformer']

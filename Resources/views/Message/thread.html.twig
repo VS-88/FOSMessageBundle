@@ -18,10 +18,7 @@
 
 <h3>{% trans from 'FOSMessageBundle' %}reply{% endtrans %}</h3>
 
-<form action="{{ url('fos_message_thread_view', {'threadId': thread.id}) }}" method="post">
-    {{ form_widget(form) }}
-
-    <input type="submit" />
-</form>
+    {{ form_start(form) }}
+    {{ form_end(form) }}
 
 {% endblock %}

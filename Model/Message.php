@@ -171,7 +171,7 @@ abstract class Message implements MessageInterface
      */
     public function addMessageAttachment(MessageAttachmentInterface $messageAttachment): MessageInterface
     {
-        $this->metadata->add($messageAttachment);
+        $this->messageAttachments->add($messageAttachment);
 
         return $this;
     }

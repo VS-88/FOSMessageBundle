@@ -88,11 +88,11 @@ abstract class AbstractMessageFormHandler
      */
     public function process(FormInterface $form, Request $request): ?MessageInterface
     {
-        if ($request->getMethod() !== 'POST') {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() === false) {
             return null;
         }
-
-        $form->handleRequest($request);
 
         if ($form->isValid()) {
             /**

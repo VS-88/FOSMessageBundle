@@ -89,7 +89,6 @@ class NewThreadMessageFormHandlerTest extends AbstractTestCase
     public function process(): void
     {
         $request = Mockery::mock(Request::class);
-        $request->shouldReceive('getMethod')->once()->andReturn(...['POST']);
 
         $form = Mockery::mock(FormInterface::class);
 
@@ -107,6 +106,7 @@ class NewThreadMessageFormHandlerTest extends AbstractTestCase
 
         $form->shouldReceive('handleRequest')->once()->with(...[$request]);
         $form->shouldReceive('isValid')->once()->andReturnTrue();
+        $form->shouldReceive('isSubmitted')->once()->andReturnTrue();
         $form->shouldReceive('getData')->once()->andReturn(...[$message]);
 
         $savedFilename = 'some-file-name';
