@@ -29,7 +29,7 @@ class NewThreadMessageFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('recipient', RecipientsType::class, [
+            ->add('recipient', RecipientType::class, [
                 'label' => 'recipient',
                 'translation_domain' => 'FOSMessageBundle',
             ])
