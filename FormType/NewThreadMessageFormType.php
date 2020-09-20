@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormType;
 
-use FOS\MessageBundle\Util\LegacyFormHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,15 +29,15 @@ class NewThreadMessageFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('recipient', LegacyFormHelper::getType('FOS\UserBundle\Form\Type\UsernameFormType'), [
+            ->add('recipient', RecipientsType::class, [
                 'label' => 'recipient',
                 'translation_domain' => 'FOSMessageBundle',
             ])
-            ->add('subject', LegacyFormHelper::getType(TextType::class), [
+            ->add('subject', TextType::class, [
                 'label' => 'subject',
                 'translation_domain' => 'FOSMessageBundle',
             ])
-            ->add('body', LegacyFormHelper::getType(TextareaType::class), [
+            ->add('body', TextareaType::class, [
                 'label' => 'body',
                 'translation_domain' => 'FOSMessageBundle',
             ])
