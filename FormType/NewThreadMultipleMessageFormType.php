@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormType;
 
-use FOS\MessageBundle\Util\LegacyFormHelper;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -14,24 +12,26 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  *
  * @author Łukasz Pospiech <zocimek@gmail.com>
  */
-class NewThreadMultipleMessageFormType extends AbstractType
+class NewThreadMultipleMessageFormType extends AbstractAttachmentAwareFormType
 {
+    public const FORM_CHILD_RECIPIENTS = 'recipients';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    protected function innerBuild(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('recipients', LegacyFormHelper::getType(RecipientsType::class), [
+            ->add(self::FORM_CHILD_RECIPIENTS, RecipientsType::class, [
                 'label' => 'recipients',
                 'translation_domain' => 'FOSMessageBundle',
             ])
-            ->add('subject', LegacyFormHelper::getType(TextType::class), [
+            ->add(self::FORM_CHILD_SUBJECT, TextType::class, [
                 'label' => 'subject',
                 'translation_domain' => 'FOSMessageBundle',
             ])
-            ->add('body', LegacyFormHelper::getType(TextareaType::class), [
+            ->add(self::FORM_CHILD_BODY, TextareaType::class, [
                 'label' => 'body',
                 'translation_domain' => 'FOSMessageBundle',
             ]);
