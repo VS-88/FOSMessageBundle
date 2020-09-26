@@ -76,4 +76,16 @@ interface MessageInterface extends ReadableInterface
      * @return Collection|MessageAttachmentInterface[]
      */
     public function getMessageAttachments(): Collection;
+
+    /**
+     * @return bool
+     */
+    public function getIsModerated(): bool;
+
+    /**
+     * @param bool $isModerated
+     *
+     * @return self
+     */
+    public function setIsModerated(bool $isModerated): self;
 }

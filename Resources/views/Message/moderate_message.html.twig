@@ -1,0 +1,31 @@
+{% extends '@FOSMessage/layout.html.twig' %}
+
+{% block fos_message_content %}
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+{% for label, messages in app.flashes(['warning', 'error']) %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div id="messenger_thread_message_attachments">
+    {% for attachment in message.messageAttachments %}
+        <span class="messenger_thread_message_attachments_message_attachment">
+                <a href="{{ path('fos_message_attachment_download', {'messageAttachmentId': attachment.id}) }}">{{ attachment.fileName }}</a>
+            </span>
+    {% endfor %}
+</div>
+
+<h3>{% trans from 'FOSMessageBundle' %}reply{% endtrans %}</h3>
+
+    {{ form_start(form) }}
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -63,6 +63,11 @@ abstract class Message implements MessageInterface
     protected $messageAttachments;
 
     /**
+     * @var int
+     */
+    private $isModerated;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -248,5 +253,25 @@ abstract class Message implements MessageInterface
         }
 
         $meta->setIsRead($isRead);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsModerated(): bool
+    {
+        return (bool) $this->isModerated;
+    }
+
+    /**
+     * @param bool $isModerated
+     *
+     * @return $this|MessageInterface
+     */
+    public function setIsModerated(bool $isModerated): MessageInterface
+    {
+        $this->isModerated = (int) $isModerated;
+
+        return $this;
     }
 }

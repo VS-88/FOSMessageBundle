@@ -59,18 +59,20 @@ class MessageAttachmentDownloadController extends AbstractController
          */
         $messageAttachment = $this->em->find($this->messageAttachmentEntityClass, $messageAttachmentId);
 
-        /**
-         * @var ParticipantInterface $user
-         */
-        $user = $this->getUser();
-
-        $thread = $messageAttachment->getMessage()->getThread();
-
-        if ($thread->isParticipant($user) === false) {
-            throw $this->createAccessDeniedException();
-        }
-
         if ($messageAttachment !== null) {
+            /**
+             * @var ParticipantInterface $user
+             */
+            $user = $this->getUser();
+
+            $message = $messageAttachment->getMessage();
+
+            $thread = $message->getThread();
+
+            if ($thread->isParticipant($user) === false || $message->getIsModerated() === false) {
+                throw $this->createAccessDeniedException();
+            }
+
             $filepath = $this->pathToDirWithAttachments . DIRECTORY_SEPARATOR . $messageAttachment->getFileName();
 
             $response = new BinaryFileResponse($filepath);

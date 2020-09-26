@@ -63,3 +63,8 @@ services:
       - '%fos_message.path_to_message_attachments_dir%'
       - '@doctrine.orm.entity_manager'
       - '%fos_message.message_attachment_class%'
+
+  FOS\MessageBundle\Controller\ModerateMessageController:
+    arguments:
+      - '%fos_message.message_class%'
+      - '%template_paths.moderate_message%'
