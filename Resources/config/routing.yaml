@@ -34,3 +34,8 @@ fos_message_thread_undelete:
 fos_message_thread_view:
   path: /{threadId}
   controller: FOS\MessageBundle\Controller\ThreadViewController::indexAction
+
+fos_message_attachment_download:
+  path: /message_attachment/download/{messageAttachmentId}
+  methods: GET
+  controller: FOS\MessageBundle\Controller\MessageAttachmentDownloadController::indexAction

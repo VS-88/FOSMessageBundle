@@ -57,3 +57,9 @@ services:
       - '%template_paths.view_thread%'
       - '@fos_message.reply_form.factory.default'
       - '@fos_message.reply_form.handler.default'
+
+  FOS\MessageBundle\Controller\MessageAttachmentDownloadController:
+    arguments:
+      - '%fos_message.path_to_message_attachments_dir%'
+      - '@doctrine.orm.entity_manager'
+      - '%fos_message.message_attachment_class%'
