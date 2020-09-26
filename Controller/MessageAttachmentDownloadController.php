@@ -9,6 +9,7 @@ use FOS\MessageBundle\Model\ParticipantInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 
 /**
  * Class MessageAttachmentDownloadController
@@ -73,6 +74,13 @@ class MessageAttachmentDownloadController extends AbstractController
             $filepath = $this->pathToDirWithAttachments . DIRECTORY_SEPARATOR . $messageAttachment->getFileName();
 
             $response = new BinaryFileResponse($filepath);
+
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                $messageAttachment->getFileName()
+            );
+
+            $response->headers->set('Content-Disposition', $disposition);
         } else {
             throw $this->createNotFoundException();
         }

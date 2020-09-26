@@ -13,7 +13,7 @@
         <div id="messenger_thread_message_attachments">
             {% for attachment in message.messageAttachments %}
                 <span class="messenger_thread_message_attachments_message_attachment">
-                    <a href="{{ path('fos_message_attachment_download', {'id': attachment.id}) }}">{{ attachment.fileName }}</a>
+                    <a href="{{ path('fos_message_attachment_download', {'messageAttachmentId': attachment.id}) }}">{{ attachment.fileName }}</a>
                 </span>
             {% endfor %}
         </div>
