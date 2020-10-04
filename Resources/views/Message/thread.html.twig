@@ -5,23 +5,25 @@
 <h2>{{ thread.subject }}</h2>
 
 {% for message in thread.messages %}
-    <div class="messenger_thread_message">
-        <div class="messenger_thread_message_info">
-            {% trans with {'%sender%': message.sender|e, '%date%': message.createdAt|date} from 'FOSMessageBundle' %}message_info{% endtrans %}
-        </div>
+    {% if message.isModerated == true %}
+        <div class="messenger_thread_message">
+            <div class="messenger_thread_message_info">
+                {% trans with {'%sender%': message.sender|e, '%date%': message.createdAt|date} from 'FOSMessageBundle' %}message_info{% endtrans %}
+            </div>
 
-        <div id="messenger_thread_message_attachments">
-            {% for attachment in message.messageAttachments %}
-                <span class="messenger_thread_message_attachments_message_attachment">
-                    <a href="{{ path('fos_message_attachment_download', {'messageAttachmentId': attachment.id}) }}">{{ attachment.fileName }}</a>
-                </span>
-            {% endfor %}
-        </div>
+            <div id="messenger_thread_message_attachments">
+                {% for attachment in message.messageAttachments %}
+                    <span class="messenger_thread_message_attachments_message_attachment">
+                        <a href="{{ path('fos_message_attachment_download', {'messageAttachmentId': attachment.id}) }}">{{ attachment.fileName }}</a>
+                    </span>
+                {% endfor %}
+            </div>
 
-        <div class="messenger_thread_message_body" id="message_{{ message.id }}">
-            {{ message.body }}
+            <div class="messenger_thread_message_body" id="message_{{ message.id }}">
+                {{ message.body }}
+            </div>
         </div>
-    </div>
+    {% elseif %}
 {% endfor %}
 
 <h3>{% trans from 'FOSMessageBundle' %}reply{% endtrans %}</h3>

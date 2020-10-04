@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class MessageAttachmentDownloadController
@@ -31,6 +32,8 @@ class MessageAttachmentDownloadController extends AbstractController
      */
     private $messageAttachmentEntityClass;
 
+    private $authorizationChecker;
+
     /**
      * MessageAttachmentDownloadController constructor.
      * @param string $pathToDirWithAttachments
@@ -40,11 +43,13 @@ class MessageAttachmentDownloadController extends AbstractController
     public function __construct(
         string $pathToDirWithAttachments,
         EntityManagerInterface $em,
+        AuthorizationCheckerInterface $authorizationChecker,
         string $messageAttachmentEntityClass
     ) {
         $this->pathToDirWithAttachments = $pathToDirWithAttachments;
         $this->messageAttachmentEntityClass = $messageAttachmentEntityClass;
         $this->em = $em;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -65,13 +70,17 @@ class MessageAttachmentDownloadController extends AbstractController
              */
             $user = $this->getUser();
 
-            $message = $messageAttachment->getMessage();
-
-            $thread = $message->getThread();
-
-            if ($thread->isParticipant($user) === false || $message->getIsModerated() === false) {
-                throw $this->createAccessDeniedException();
+            if ($this->authorizationChecker->isGranted('READ', $messageAttachment->getMessage()) === false) {
+                throw $this->createAccessDeniedException('Доступен запрещен!');
             }
+
+//            $message = $messageAttachment->getMessage();
+
+//            $thread = $message->getThread();
+
+//            if ($thread->isParticipant($user) === false || $message->getIsModerated() === false) {
+//                throw $this->createAccessDeniedException();
+//            }
 
             $filepath = $this->pathToDirWithAttachments . DIRECTORY_SEPARATOR . $messageAttachment->getFileName();
 

@@ -5,9 +5,11 @@ namespace FOS\MessageBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use FOS\MessageBundle\Event\ModeratedMessageEvent;
 use FOS\MessageBundle\FormType\ModerateMessageFormType;
 use FOS\MessageBundle\Model\MessageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,15 +29,22 @@ class ModerateMessageController extends AbstractController
      */
     private $templatePath;
 
+    private $eventDispatcher;
+
     /**
      * ModerateMessageController constructor.
      * @param string $messageEntityClass
      * @param string $templatePath
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(string $messageEntityClass, string $templatePath)
-    {
+    public function __construct(
+        string $messageEntityClass,
+        string $templatePath,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->messageEntityClass = $messageEntityClass;
         $this->templatePath       = $templatePath;
+        $this->eventDispatcher    = $eventDispatcher;
     }
 
     /**
@@ -79,6 +88,8 @@ class ModerateMessageController extends AbstractController
                         $entityManager->commit();
 
                         $this->addFlash('success', 'Message was successfully updated!');
+
+                        $this->eventDispatcher->dispatch(new ModeratedMessageEvent($message));
                     } catch (Exception $e) {
                         $entityManager->rollback();
 
