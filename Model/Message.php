@@ -65,7 +65,7 @@ abstract class Message implements MessageInterface
     /**
      * @var int
      */
-    private $isModerated;
+    protected $isModerated;
 
     /**
      * Constructor.
