@@ -43,8 +43,8 @@ class MessageAttachmentDownloadController extends AbstractController
     public function __construct(
         string $pathToDirWithAttachments,
         EntityManagerInterface $em,
-        AuthorizationCheckerInterface $authorizationChecker,
-        string $messageAttachmentEntityClass
+        string $messageAttachmentEntityClass,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->pathToDirWithAttachments = $pathToDirWithAttachments;
         $this->messageAttachmentEntityClass = $messageAttachmentEntityClass;
