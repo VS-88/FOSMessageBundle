@@ -47,20 +47,20 @@ class ModerateMessageListController extends AbstractController
      * @param string $actionsTemplatePath
      * @param string $listContainerId
      * @param int $limit
-     * @param ModerationAwareMessageProviderInterface $listProvider
+     * @param ModerationAwareMessageProviderInterface $moderateMessagesListProvider
      */
     public function __construct(
         string $actionsTemplatePath,
         string $listContainerId,
         int $limit,
         PaginatorInterface $paginator,
-        ModerationAwareMessageProviderInterface $listProvider
+        ModerationAwareMessageProviderInterface $moderateMessagesListProvider
     ) {
         $this->paginator           = $paginator;
         $this->templatePath = $actionsTemplatePath;
         $this->listContainerId     = $listContainerId;
         $this->limit               = $limit;
-        $this->listProvider        = $listProvider;
+        $this->listProvider        = $moderateMessagesListProvider;
     }
 
     /**
