@@ -50,10 +50,10 @@ class ModerateMessageListController extends AbstractController
      * @param ModerationAwareMessageProviderInterface $listProvider
      */
     public function __construct(
-        PaginatorInterface $paginator,
         string $actionsTemplatePath,
         string $listContainerId,
         int $limit,
+        PaginatorInterface $paginator,
         ModerationAwareMessageProviderInterface $listProvider
     ) {
         $this->paginator           = $paginator;
@@ -70,7 +70,7 @@ class ModerateMessageListController extends AbstractController
      *
      * @throws LogicException
      */
-    public function index(Request $request): Response
+    public function indexAction(Request $request): Response
     {
         $query = $this->listProvider->getMessagesByModerationFlag(false);
 

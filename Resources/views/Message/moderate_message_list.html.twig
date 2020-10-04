@@ -1,0 +1,33 @@
+<table>
+
+    <thead>
+        <tr>
+            <th>{% trans from 'FOSMessageBundle' %}id{% endtrans %}</th>
+            <th>{% trans from 'FOSMessageBundle' %}body{% endtrans %}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% if list %}
+        {% for message in list %}
+            <tr>
+                <td>
+                    <a href="{{ url('fos_message_moderate', {'threadId': message.id}) }}">
+                        {{ message.id }}
+                    </a>
+
+                    {% if not fos_message_is_read(thread) %}
+                        ({% trans from 'FOSMessageBundle' %}new{% endtrans %})
+                    {% endif %}
+                </td>
+                <td>
+                    {{ message.body }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <div class="navigation">
+        {{ knp_pagination_render(list) }}
+    </div>
+</table>

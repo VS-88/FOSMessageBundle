@@ -7,3 +7,4 @@ parameters:
   template_paths.view_thread: "@@FOSMessage/Message/thread.html.twig"
   template_paths.thread_list: "@@FOSMessage/Message/threads_list.html.twig"
   template_paths.moderate_message: "@@FOSMessage/Message/moderate_message.html.twig"
+  template_paths.moderate_message_list: "@@FOSMessage/Message/moderate_message_list.html.twig"

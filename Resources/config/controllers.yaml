@@ -68,3 +68,9 @@ services:
     arguments:
       - '%fos_message.message_class%'
       - '%template_paths.moderate_message%'
+
+  FOS\MessageBundle\Controller\ModerateMessageListController:
+    arguments:
+      - '%template_paths.moderate_message_list%'
+      - 'moderate_messages_list'
+      - 50

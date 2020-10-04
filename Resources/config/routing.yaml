@@ -44,3 +44,8 @@ fos_message_moderate:
   path: /message/moderate/{messageId}
   methods: GET
   controller: FOS\MessageBundle\Controller\ModerateMessageController::indexAction
+
+fos_message_moderate_list:
+  path: /message/moderate
+  methods: GET
+  controller: FOS\MessageBundle\Controller\ModerateMessageListController::indexAction
