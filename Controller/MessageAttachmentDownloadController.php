@@ -70,7 +70,7 @@ class MessageAttachmentDownloadController extends AbstractController
              */
             $user = $this->getUser();
 
-            if ($this->authorizationChecker->isGranted('READ', $messageAttachment->getMessage()) === false) {
+            if ($this->authorizationChecker->isGranted('VIEW', $messageAttachment->getMessage()) === false) {
                 throw $this->createAccessDeniedException('Доступен запрещен!');
             }
 

@@ -42,7 +42,7 @@ fos_message_attachment_download:
 
 fos_message_moderate:
   path: /message/moderate/{messageId}
-  methods: GET
+  methods: GET|POST
   controller: FOS\MessageBundle\Controller\ModerateMessageController::indexAction
 
 fos_message_moderate_list:
