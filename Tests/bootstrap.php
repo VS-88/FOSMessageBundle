@@ -1,0 +1,51 @@
+<?php
+declare(strict_types = 1);
+
+use FOS\MessageBundle\Entity\DummyParticipant;
+use FOS\MessageBundle\Model\ParticipantInterface;
+
+defined('ROOT_PATH') || define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+
+date_default_timezone_set('America/Chicago');
+
+require_once ROOT_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+error_reporting(-1);
+
+$conf = [
+    'dbal' => [
+        'server_version' => '8.0',
+        'charset' => 'utf8mb4',
+        'default_table_options' => [
+            'charset' => 'utf8mb4',
+            'collate' => 'utf8mb4_unicode_ci',
+            'engine'  => 'InnoDB'
+        ],
+        'host' => 'localhost',
+        'user' => 'root',
+        'dbname' => 'fos_message_test',
+        'port' => '3306',
+        'password' => '123',
+        'options' => ['x_reconnect_attempts' => 10],
+    ],
+    'orm' => [
+        'auto_generate_proxy_classes' => false,
+        'resolve_target_entities' => [
+            ParticipantInterface::class => DummyParticipant::class,
+
+        ],
+        'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
+        'auto_mapping' => 'true',
+        'mappings' => [
+            'App' => [
+                'is_bundle' => false,
+                'type' => 'annotation',
+                'dir' => '%kernel.project_dir%/Entity',
+                'prefix' => 'FOS\MessageBundle\Entity',
+                'alias' => 'FOSMessageBundleEntity'
+            ]
+        ],
+    ],
+];
+
+$_ENV['doctrine_config_as_json'] = json_encode($conf);

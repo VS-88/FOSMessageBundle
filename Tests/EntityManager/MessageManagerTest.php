@@ -21,7 +21,6 @@ use FOS\MessageBundle\Model\ThreadMetadataInterface;
 use FOS\MessageBundle\Tests\AbstractTestCase;
 use Mockery\MockInterface;
 use PDO;
-use Symfony\Component\Validator\Mapping\MetadataInterface;
 
 /**
  * Default ORM MessageManager.
@@ -193,7 +192,7 @@ class MessageManagerTest extends AbstractTestCase
             $m
         ];
 
-        $metaData = \Mockery::mock(MetadataInterface::class);
+        $metaData = \Mockery::mock(MessageMetadataInterface::class);
 
         $m->shouldReceive('getMetadataForParticipant')
             ->once()

@@ -277,8 +277,9 @@ abstract class Thread implements ThreadInterface
      * @param ThreadMetadataInterface $meta
      * @return ThreadInterface
      */
-    public function addMetadata(\FOS\MessageBundle\Model\ThreadMetadataInterface $meta): ThreadInterface
+    public function addMetadata(ThreadMetadataInterface $meta): ThreadInterface
     {
+        $meta->setThread($this);
         $this->metadata->add($meta);
 
         return $this;
@@ -309,6 +310,9 @@ abstract class Thread implements ThreadInterface
     {
         $otherParticipants = $this->getParticipants()->toArray();
 
+        /**
+         * @var int|string $key
+         */
         $key = array_search($participant, $otherParticipants, true);
 
         if ($key !== false) {
@@ -317,5 +321,84 @@ abstract class Thread implements ThreadInterface
 
         // we want to reset the array indexes
         return array_values($otherParticipants);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isParticipant(ParticipantInterface $participant): bool
+    {
+        return $this->getParticipantsCollection()->contains($participant);
+    }
+
+    /**
+     * Get the collection of ModelThreadMetadata.
+     *
+     * @return Collection
+     */
+    public function getAllMetadata(): Collection
+    {
+        return $this->metadata;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->getParticipantsCollection();
+    }
+
+    /**
+     * Gets the users participating in this conversation.
+     *
+     * Since the ORM schema does not map the participants collection field, it
+     * must be created on demand.
+     *
+     * @return ArrayCollection|ParticipantInterface[]
+     */
+    protected function getParticipantsCollection(): Collection
+    {
+        if ($this->participants === null) {
+            $this->participants = new ArrayCollection();
+
+            foreach ($this->metadata as $data) {
+                $this->participants->add($data->getParticipant());
+            }
+        }
+
+        return $this->participants;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addParticipant(ParticipantInterface $participant): ThreadInterface
+    {
+        if (!$this->isParticipant($participant)) {
+            $this->getParticipantsCollection()->add($participant);
+        }
+
+        return  $this;
+    }
+
+    /**
+     * Adds many participants to the thread.
+     *
+     * @param iterable
+     *
+     * @return ThreadInterface
+     *
+     * @throws InvalidArgumentException
+     */
+    public function addParticipants(iterable $participants): ThreadInterface
+    {
+        foreach ($participants as $participant) {
+            $this->addParticipant($participant);
+        }
+
+        return $this;
     }
 }

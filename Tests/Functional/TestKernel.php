@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\Functional;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use FOS\MessageBundle\FOSMessageBundle;
-use FOS\MessageBundle\Tests\Functional\Entity\Message;
-use FOS\MessageBundle\Tests\Functional\Entity\MessageAttachment;
-use FOS\MessageBundle\Tests\Functional\Entity\Thread;
 use FOS\MessageBundle\Tests\Functional\Entity\UserProvider;
-use FOS\MessageBundle\Tests\Functional\EntityManager\MessageManager;
-use FOS\MessageBundle\Tests\Functional\EntityManager\ThreadManager;
 use FOS\MessageBundle\Tests\Functional\Form\UserToUsernameTransformer;
+use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
@@ -40,6 +38,9 @@ class TestKernel extends Kernel
             new SecurityBundle(),
             new TwigBundle(),
             new FOSMessageBundle(),
+            new KnpPaginatorBundle(),
+            new DoctrineBundle(),
+            new DoctrineFixturesBundle(),
         ];
     }
 
@@ -57,6 +58,7 @@ class TestKernel extends Kernel
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
     {
+
         $c->loadFromExtension('framework', [
             'secret' => 'MySecretKey',
             'test' => null,
@@ -74,11 +76,10 @@ class TestKernel extends Kernel
             'strict_variables' => '%kernel.debug%',
         ]);
 
+        $c->loadFromExtension('doctrine', json_decode($_ENV['doctrine_config_as_json'], true));
+
         $c->loadFromExtension('fos_message', [
             'db_driver' => 'orm',
-            'thread_class' => Thread::class,
-            'message_class' => Message::class,
-            'message_attachment_class' => MessageAttachment::class,
             'path_to_message_attachments_dir' => 'some_path'
         ]);
 
@@ -99,7 +100,8 @@ class RegisteringManagersPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
-        $container->register('fos_message.message_manager.default', MessageManager::class);
-        $container->register('fos_message.thread_manager.default', ThreadManager::class);
+//        $container->register('fos_message.message_manager.default', MessageManager::class);
+//        $container->register('fos_message.thread_manager.default', ThreadManager::class);
+//        $container->register('FOS\MessageBundle\Provider\ModerationAwareMessageProviderInterface', MessageManager::class);
     }
 }

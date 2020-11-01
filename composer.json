@@ -24,7 +24,8 @@
         "symfony/twig-bundle": "^5.0",
         "symfony/asset": "^5.0",
         "ramsey/uuid": "^4.1",
-        "knplabs/knp-paginator-bundle": "^5.3"
+        "knplabs/knp-paginator-bundle": "^5.3",
+        "doctrine/doctrine-bundle": "^2.1.0"
     },
     "require-dev": {
         "symfony/validator": "^5.0",
@@ -35,7 +36,8 @@
         "symfony/browser-kit": "^5.0",
         "symfony/phpunit-bridge": "^5.0",
         "doctrine/orm": "^2.0",
-        "mockery/mockery": "1.2.2"
+        "mockery/mockery": "1.2.2",
+        "doctrine/doctrine-fixtures-bundle": "^3.3"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "dev-master",

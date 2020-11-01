@@ -158,19 +158,6 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Adds MessageMetadata to the metadata collection.
-     *
-     * @param MessageMetadataInterface $meta
-     * @return MessageInterface
-     */
-    public function addMetadata(MessageMetadataInterface $meta): MessageInterface
-    {
-        $this->metadata->add($meta);
-
-        return $this;
-    }
-
-    /**
      * @param MessageAttachmentInterface $messageAttachment
      * @return MessageInterface
      */
@@ -218,7 +205,7 @@ abstract class Message implements MessageInterface
      *
      * @return MessageMetadata
      */
-    public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadata
+    public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadataInterface
     {
         foreach ($this->metadata as $meta) {
             if ($meta->getParticipant()->getId() === $participant->getId()) {
@@ -271,6 +258,27 @@ abstract class Message implements MessageInterface
     public function setIsModerated(bool $isModerated): MessageInterface
     {
         $this->isModerated = (int) $isModerated;
+
+        return $this;
+    }
+
+    /**
+     * Get the collection of MessageMetadata.
+     *
+     * @return Collection
+     */
+    public function getAllMetadata(): Collection
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addMetadata(MessageMetadataInterface $meta): MessageInterface
+    {
+        $meta->setMessage($this);
+        $this->metadata->add($meta);
 
         return $this;
     }

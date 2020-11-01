@@ -53,8 +53,8 @@ class ModerateMessageListController extends AbstractController
         string $actionsTemplatePath,
         string $listContainerId,
         int $limit,
-        PaginatorInterface $paginator,
-        ModerationAwareMessageProviderInterface $moderateMessagesListProvider
+        ModerationAwareMessageProviderInterface $moderateMessagesListProvider,
+        PaginatorInterface $paginator
     ) {
         $this->paginator           = $paginator;
         $this->templatePath = $actionsTemplatePath;

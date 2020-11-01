@@ -57,4 +57,31 @@ abstract class MessageMetadata implements MessageMetadataInterface
 
         return $this;
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMessage(): MessageInterface
+    {
+        return $this->message;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setMessage(MessageInterface $message): MessageMetadataInterface
+    {
+        $this->message = $message;
+
+        return $this;
+    }
 }

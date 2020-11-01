@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\DependencyInjection;
 
+use InvalidArgumentException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
@@ -33,7 +34,7 @@ class FOSMessageExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         if (!in_array(strtolower($config['db_driver']), ['orm', 'mongodb'])) {
-            throw new \InvalidArgumentException(sprintf('Invalid db driver "%s".', $config['db_driver']));
+            throw new InvalidArgumentException(sprintf('Invalid db driver "%s".', $config['db_driver']));
         }
 
         $loader->load(sprintf('%s.yaml', $config['db_driver']));
@@ -48,7 +49,10 @@ class FOSMessageExtension extends Extension
         $container->setParameter('fos_message.message_class', $config['message_class']);
         $container->setParameter('fos_message.thread_class', $config['thread_class']);
         $container->setParameter('fos_message.message_attachment_class', $config['message_attachment_class']);
-        $container->setParameter('fos_message.path_to_message_attachments_dir', $config['path_to_message_attachments_dir']);
+        $container->setParameter(
+            'fos_message.path_to_message_attachments_dir',
+            $config['path_to_message_attachments_dir']
+        );
 
         $container->setParameter('fos_message.new_thread_form.model', $config['new_thread_form']['model']);
         $container->setParameter('fos_message.new_thread_form.name', $config['new_thread_form']['name']);

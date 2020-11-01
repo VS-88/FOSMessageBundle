@@ -5,6 +5,7 @@ namespace FOS\MessageBundle\Model;
 
 use DateTime;
 use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 
 /**
  * Interface ThreadInterface
@@ -176,4 +177,24 @@ interface ThreadInterface extends ReadableInterface
      * @return Thread
      */
     public function setIsSpam($isSpam): self;
+
+    /**
+     * Adds many participants to the thread.
+     *
+     * @param iterable
+     *
+     * @return ThreadInterface
+     *
+     * @throws InvalidArgumentException
+     */
+    public function addParticipants(iterable $participants): ThreadInterface;
+
+    /**
+     * Gets the ThreadMetadata for a participant.
+     *
+     * @param ParticipantInterface $participant
+     *
+     * @return AbstractThreadMetadata
+     */
+    public function getMetadataForParticipant(ParticipantInterface $participant): ?AbstractThreadMetadata;
 }

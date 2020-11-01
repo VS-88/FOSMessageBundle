@@ -3,13 +3,10 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\FormFactory;
 
+use FOS\MessageBundle\Entity\Thread;
 use FOS\MessageBundle\FormFactory\ReplyMessageFormFactory;
-use FOS\MessageBundle\FormModel\AbstractMessage;
-use FOS\MessageBundle\FormModel\NewThreadMessage;
 use FOS\MessageBundle\FormModel\ReplyMessage;
-use FOS\MessageBundle\Model\ThreadInterface;
 use FOS\MessageBundle\Tests\AbstractTestCase;
-use FOS\MessageBundle\Tests\Functional\Entity\Thread;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 

@@ -3,17 +3,19 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\Functional\EntityManager;
 
+use Doctrine\ORM\AbstractQuery;
 use FOS\MessageBundle\Model\MessageInterface;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ReadableInterface;
 use FOS\MessageBundle\ModelManager\MessageManager as BaseMessageManager;
+use FOS\MessageBundle\Provider\ModerationAwareMessageProviderInterface;
 use FOS\MessageBundle\Tests\Functional\Entity\Message;
 
 /**
  * Class MessageManager
  * @package FOS\MessageBundle\Tests\Functional\EntityManager
  */
-class MessageManager extends BaseMessageManager
+class MessageManager extends BaseMessageManager implements ModerationAwareMessageProviderInterface
 {
     /**
      * {@inheritDoc}
@@ -56,5 +58,10 @@ class MessageManager extends BaseMessageManager
     public function createMessage(): MessageInterface
     {
         return new Message();
+    }
+
+    public function getMessagesByModerationFlag(bool $isModerated): AbstractQuery
+    {
+        // TODO: Implement getMessagesByModerationFlag() method.
     }
 }

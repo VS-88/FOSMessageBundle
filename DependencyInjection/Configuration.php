@@ -2,6 +2,9 @@
 
 namespace FOS\MessageBundle\DependencyInjection;
 
+use FOS\MessageBundle\Entity\Message;
+use FOS\MessageBundle\Entity\MessageAttachment;
+use FOS\MessageBundle\Entity\Thread;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -22,11 +25,11 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('message_attachment_class')->isRequired()->cannotBeEmpty()->end()
+                ->scalarNode('message_attachment_class')->defaultValue(MessageAttachment::class)->cannotBeEmpty()->end()
                 ->scalarNode('path_to_message_attachments_dir')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('db_driver')->cannotBeOverwritten()->isRequired()->cannotBeEmpty()->end()
-                ->scalarNode('thread_class')->isRequired()->cannotBeEmpty()->end()
-                ->scalarNode('message_class')->isRequired()->cannotBeEmpty()->end()
+                ->scalarNode('thread_class')->cannotBeEmpty()->defaultValue(Thread::class)->end()
+                ->scalarNode('message_class')->defaultValue(Message::class)->cannotBeEmpty()->end()
                 ->scalarNode('message_manager')->defaultValue('fos_message.message_manager.default')->cannotBeEmpty()->end()
                 ->scalarNode('thread_manager')->defaultValue('fos_message.thread_manager.default')->cannotBeEmpty()->end()
                 ->scalarNode('sender')->defaultValue('fos_message.sender.default')->cannotBeEmpty()->end()

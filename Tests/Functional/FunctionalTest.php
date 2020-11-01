@@ -3,29 +3,34 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\Functional;
 
+use FOS\MessageBundle\DataFixtures\Message\MessageFixture;
+use FOS\MessageBundle\DataFixtures\MessageMetadata\MessageMetadataFixture;
+use FOS\MessageBundle\DataFixtures\Participant\ParticipantFixture;
+use FOS\MessageBundle\DataFixtures\Thread\ThreadFixture;
+use FOS\MessageBundle\DataFixtures\ThreadMetadata\ThreadMetadataFixture;
+use FOS\MessageBundle\Tests\AbstractDataBaseTestCase;
+
 /**
  * Class FunctionalTest
  */
-class FunctionalTest extends WebTestCase
+class FunctionalTest extends AbstractDataBaseTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
+    public const FIXTURES = [
+        ParticipantFixture::class,
+        ThreadFixture::class,
+        MessageFixture::class,
+        ThreadMetadataFixture::class,
+        MessageMetadataFixture::class,
+    ];
 
     /**
      * @test
      */
     public function controllerSent(): void
     {
-        $client = self::createClient([], [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ]);
+        $this->kernelBrowser->request('GET', '/sent');
 
-        $client->request('GET', '/sent');
-
-        $response = $client->getResponse();
+        $response = $this->kernelBrowser->getResponse();
         static::assertEquals(200, $response->getStatusCode());
     }
 
@@ -34,14 +39,9 @@ class FunctionalTest extends WebTestCase
      */
     public function controllerInbox(): void
     {
-        $client = self::createClient([], [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ]);
+        $this->kernelBrowser->request('GET', '/inbox');
 
-        $client->request('GET', '/inbox');
-
-        $response = $client->getResponse();
+        $response = $this->kernelBrowser->getResponse();
         static::assertEquals(200, $response->getStatusCode());
     }
 
@@ -50,14 +50,29 @@ class FunctionalTest extends WebTestCase
      */
     public function controllerDeleted(): void
     {
-        $client = self::createClient([], [
+
+        $this->kernelBrowser->request('GET', '/deleted');
+
+        $response = $this->kernelBrowser->getResponse();
+        static::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getFixtures(): array
+    {
+        return self::FIXTURES;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getClientServerParams(): array
+    {
+        return [
             'PHP_AUTH_USER' => 'guilhem',
             'PHP_AUTH_PW' => 'pass',
-        ]);
-
-        $client->request('GET', '/deleted');
-
-        $response = $client->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+        ];
     }
 }

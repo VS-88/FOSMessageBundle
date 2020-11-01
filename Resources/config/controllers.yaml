@@ -2,6 +2,9 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+
+  FOS\MessageBundle\Repository\:
+    resource: '../../Repository'
     
   FOS\MessageBundle\Controller\InboxController:
     class: FOS\MessageBundle\Controller\InboxController
@@ -74,3 +77,9 @@ services:
       - '%template_paths.moderate_message_list%'
       - 'moderate_messages_list'
       - 50
+      - '@fos_message.moderate_message_list.provider'
+
+  fos_message.moderate_message_list.provider:
+    class: FOS\MessageBundle\Repository\MessageRepository
+    arguments:
+      - '@doctrine'
