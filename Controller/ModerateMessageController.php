@@ -83,20 +83,21 @@ class ModerateMessageController extends AbstractController
                     $data = $form->getData();
 
                     $entityManager->beginTransaction();
+                    $message->setIsModerated((bool) $data[ModerateMessageFormType::FORM_CHILD_IS_APPROVED]);
 
                     try {
-                        $message->setIsModerated((bool) $data[ModerateMessageFormType::FORM_CHILD_IS_APPROVED]);
                         $entityManager->persist($message);
 
                         $entityManager->flush();
-                        $entityManager->commit();
 
-                        $this->addFlash('success', 'Message was successfully updated!');
+                        $entityManager->commit();
                     } catch (Exception $e) {
                         $entityManager->rollback();
 
                         throw $e;
                     }
+
+                    $this->addFlash('success', 'Message was successfully updated!');
 
                     $this->eventDispatcher->dispatch(new ModeratedMessageEvent($message));
                 } else {

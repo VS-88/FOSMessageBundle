@@ -9,6 +9,7 @@ defined('ROOT_PATH') || define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARAT
 date_default_timezone_set('America/Chicago');
 
 require_once ROOT_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+ob_start();
 
 error_reporting(-1);
 

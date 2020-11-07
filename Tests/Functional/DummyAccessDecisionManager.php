@@ -12,9 +12,8 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
  */
 class DummyAccessDecisionManager implements AccessDecisionManagerInterface
 {
-
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function decide(TokenInterface $token, array $attributes, $object = null)
     {

@@ -64,6 +64,13 @@ class TestKernel extends Kernel
             'test' => null,
             'form' => null,
             'assets' => null,
+            'session' => [
+                'handler_id'      => 'session.handler.native_file',
+                'save_path'       => '%kernel.project_dir%/var/sessions/%kernel.environment%',
+                'cookie_lifetime' => 2592000,
+                'cookie_secure'   => 'auto',
+                'cookie_samesite' => 'lax',
+            ],
         ]);
 
         $c->loadFromExtension('security', [

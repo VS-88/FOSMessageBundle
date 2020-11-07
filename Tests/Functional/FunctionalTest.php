@@ -58,6 +58,18 @@ class FunctionalTest extends AbstractDataBaseTestCase
     }
 
     /**
+     * @test
+     */
+    public function controllerModeratedList(): void
+    {
+
+        $this->kernelBrowser->request('GET', '/message/moderate');
+
+        $response = $this->kernelBrowser->getResponse();
+        static::assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
      * @return string[]
      */
     protected function getFixtures(): array

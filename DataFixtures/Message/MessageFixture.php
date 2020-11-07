@@ -37,7 +37,7 @@ class MessageFixture extends AbstractFixture implements DependentFixtureInterfac
         $entity
             ->setSender($participant)
             ->setThread($thread)
-            ->setIsModerated(true)
+            ->setIsModerated(false)
             ->setBody('Some body');
 
         $manager->persist($entity);

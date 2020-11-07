@@ -37,7 +37,8 @@
         "symfony/phpunit-bridge": "^5.0",
         "doctrine/orm": "^2.0",
         "mockery/mockery": "1.2.2",
-        "doctrine/doctrine-fixtures-bundle": "^3.3"
+        "doctrine/doctrine-fixtures-bundle": "^3.3",
+        "symfony/css-selector": "^5.1"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "dev-master",
