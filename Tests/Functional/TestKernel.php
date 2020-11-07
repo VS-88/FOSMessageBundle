@@ -15,7 +15,6 @@ use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Exception\LoaderLoadException;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
@@ -58,6 +57,7 @@ class TestKernel extends Kernel
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
     {
+        $loader->load(__DIR__ . '/services_test.yaml');
 
         $c->loadFromExtension('framework', [
             'secret' => 'MySecretKey',
@@ -80,28 +80,11 @@ class TestKernel extends Kernel
 
         $c->loadFromExtension('fos_message', [
             'db_driver' => 'orm',
-            'path_to_message_attachments_dir' => 'some_path'
+            'path_to_message_attachments_dir' => __DIR__ . DIRECTORY_SEPARATOR . 'var',
         ]);
 
         $c->register('fos_user.user_to_username_transformer', UserToUsernameTransformer::class);
         $c->register('app.user_provider', UserProvider::class);
         $c->addCompilerPass(new RegisteringManagersPass());
-    }
-}
-
-/**
- * Class RegisteringManagersPass
- * @package FOS\MessageBundle\Tests\Functional
- */
-class RegisteringManagersPass implements CompilerPassInterface
-{
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container): void
-    {
-//        $container->register('fos_message.message_manager.default', MessageManager::class);
-//        $container->register('fos_message.thread_manager.default', ThreadManager::class);
-//        $container->register('FOS\MessageBundle\Provider\ModerationAwareMessageProviderInterface', MessageManager::class);
     }
 }

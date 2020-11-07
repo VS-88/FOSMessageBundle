@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace FOS\MessageBundle\Repository;
+namespace FOS\MessageBundle\Tests\Functional\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use FOS\MessageBundle\Entity\DummyParticipant;
+use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
 
 /**
  * Class DummyParticipantRepository

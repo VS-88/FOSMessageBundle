@@ -1,8 +1,8 @@
 <?php
 declare(strict_types = 1);
 
-use FOS\MessageBundle\Entity\DummyParticipant;
 use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
 
 defined('ROOT_PATH') || define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
@@ -32,7 +32,6 @@ $conf = [
         'auto_generate_proxy_classes' => false,
         'resolve_target_entities' => [
             ParticipantInterface::class => DummyParticipant::class,
-
         ],
         'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
         'auto_mapping' => 'true',
@@ -43,7 +42,14 @@ $conf = [
                 'dir' => '%kernel.project_dir%/Entity',
                 'prefix' => 'FOS\MessageBundle\Entity',
                 'alias' => 'FOSMessageBundleEntity'
-            ]
+            ],
+            'Tests' => [
+                'is_bundle' => false,
+                'type' => 'annotation',
+                'dir' => '%kernel.project_dir%/Tests/Functional/Entity',
+                'prefix' => 'FOS\MessageBundle\Tests\Functional\Entity',
+                'alias' => 'FOSMessageBundleEntityTest'
+            ],
         ],
     ],
 ];

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests;
 
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\ORM\EntityManager;
@@ -20,6 +21,7 @@ use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Class AbstractDataBaseTestCase
@@ -47,6 +49,13 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
     protected $testContainer;
 
     /**
+     * @var ORMPurger
+     */
+    private $purger;
+
+    private static $tablesAreCreated = false;
+
+    /**
      * {@inheritDoc}
      *
      * @throws Exception
@@ -61,14 +70,22 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
         );
 
         $container = $this->kernelBrowser->getContainer();
+
         $testContainer = $container->get('test.service_container');
         $this->testContainer = $testContainer;
 
         $this->managerRegistry = $testContainer->get('doctrine');
         $this->em = $this->managerRegistry->getManager();
+
+        $this->purger = new ORMPurger($this->em);
+
+        $this->lazyCreateTables($this->testContainer);
+
         $this->em->beginTransaction();
 
         $this->loadFixtures($this->testContainer, $this->getFixtures());
+
+        $this->em->commit();
     }
 
     /**
@@ -78,9 +95,9 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
      */
     protected function tearDown(): void
     {
-        $this->em->rollback();
-
         Mockery::close();
+
+        $this->purger->purge();
 
         parent::tearDown();
     }
@@ -100,31 +117,7 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
      */
     private function loadFixtures(ContainerInterface $container, array $fixtureClassNames): void
     {
-        $helperSet = new HelperSet([
-            new FormatterHelper(),
-            new DebugFormatterHelper(),
-            new ProcessHelper(),
-            new QuestionHelper(),
-        ]);
-
-        $helperSet->set(new ConnectionHelper($this->em->getConnection()), 'db');
-        $helperSet->set(new EntityManagerHelper($this->em), 'em');
-
-        $app = new Application($this->testContainer->get('kernel'));
-        $app->setHelperSet($helperSet);
-
-        $schemaUpdateCommand = $container->get('doctrine.schema_update_command');
-        $schemaUpdateCommand->setApplication($app);
-
         $loadFixturesCommand = $container->get('doctrine.fixtures_load_command');
-
-        $commandTester = new CommandTester($schemaUpdateCommand);
-
-        $commandTester->execute(
-            [
-                '--force' => true,
-            ]
-        );
 
         $commandTester = new CommandTester($loadFixturesCommand);
 
@@ -150,5 +143,47 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
     protected function getClientServerParams(): array
     {
         return [];
+    }
+
+    /**
+     * @param ContainerInterface $container
+     *
+     * @throws Exception
+     */
+    private function lazyCreateTables(ContainerInterface $container): void
+    {
+        if (self::$tablesAreCreated === false) {
+            $helperSet = new HelperSet([
+                new FormatterHelper(),
+                new DebugFormatterHelper(),
+                new ProcessHelper(),
+                new QuestionHelper(),
+            ]);
+
+            $helperSet->set(new ConnectionHelper($this->em->getConnection()), 'db');
+            $helperSet->set(new EntityManagerHelper($this->em), 'em');
+
+            /**
+             * @var KernelInterface $kernel
+             */
+            $kernel = $this->testContainer->get('kernel');
+
+            $app = new Application($kernel);
+            $app->setHelperSet($helperSet);
+
+            $schemaUpdateCommand = $container->get('doctrine.schema_update_command');
+            $schemaUpdateCommand->setApplication($app);
+
+
+            $commandTester = new CommandTester($schemaUpdateCommand);
+
+            $commandTester->execute(
+                [
+                    '--force' => true,
+                ]
+            );
+
+            self::$tablesAreCreated = true;
+        }
     }
 }

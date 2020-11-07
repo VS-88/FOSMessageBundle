@@ -1,14 +1,14 @@
 <?php
 declare(strict_types = 1);
 
-namespace FOS\MessageBundle\Entity;
+namespace FOS\MessageBundle\Tests\Functional\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FOS\MessageBundle\Model\ParticipantInterface;
 
 /**
  * @ORM\Table(name="fos_message_participant")
- * @ORM\Entity(repositoryClass="FOS\MessageBundle\Repository\DummyParticipantRepository")
+ * @ORM\Entity(repositoryClass="FOS\MessageBundle\Tests\Functional\Repository\DummyParticipantRepository")
  */
 class DummyParticipant implements ParticipantInterface
 {

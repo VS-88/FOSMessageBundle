@@ -5,7 +5,7 @@ namespace FOS\MessageBundle\DataFixtures\Participant;
 
 use Doctrine\Persistence\ObjectManager;
 use FOS\MessageBundle\DataFixtures\AbstractFixture;
-use FOS\MessageBundle\Entity\DummyParticipant;
+use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
 
 /**
  * Class ParticipantFixture

@@ -5,7 +5,6 @@ namespace FOS\MessageBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\MessageBundle\Model\MessageAttachmentInterface;
-use FOS\MessageBundle\Model\ParticipantInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +31,9 @@ class MessageAttachmentDownloadController extends AbstractController
      */
     private $messageAttachmentEntityClass;
 
+    /**
+     * @var AuthorizationCheckerInterface
+     */
     private $authorizationChecker;
 
     /**
@@ -39,6 +41,7 @@ class MessageAttachmentDownloadController extends AbstractController
      * @param string $pathToDirWithAttachments
      * @param EntityManagerInterface $em
      * @param string $messageAttachmentEntityClass
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         string $pathToDirWithAttachments,
@@ -65,24 +68,13 @@ class MessageAttachmentDownloadController extends AbstractController
         $messageAttachment = $this->em->find($this->messageAttachmentEntityClass, $messageAttachmentId);
 
         if ($messageAttachment !== null) {
-            /**
-             * @var ParticipantInterface $user
-             */
-            $user = $this->getUser();
-
             if ($this->authorizationChecker->isGranted('VIEW', $messageAttachment->getMessage()) === false) {
                 throw $this->createAccessDeniedException('Доступен запрещен!');
             }
 
-//            $message = $messageAttachment->getMessage();
-
-//            $thread = $message->getThread();
-
-//            if ($thread->isParticipant($user) === false || $message->getIsModerated() === false) {
-//                throw $this->createAccessDeniedException();
-//            }
-
-            $filepath = $this->pathToDirWithAttachments . DIRECTORY_SEPARATOR . $messageAttachment->getFileName();
+            $filepath = realpath(
+                $this->pathToDirWithAttachments . DIRECTORY_SEPARATOR . $messageAttachment->getFileName()
+            );
 
             $response = new BinaryFileResponse($filepath);
 
