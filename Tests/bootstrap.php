@@ -3,12 +3,17 @@ declare(strict_types = 1);
 
 use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
+use Symfony\Component\Filesystem\Filesystem;
 
 defined('ROOT_PATH') || define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 
 date_default_timezone_set('America/Chicago');
 
 require_once ROOT_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+$fs = new Filesystem();
+$fs->remove(__DIR__ . '/../var/cache');
+
 ob_start();
 
 error_reporting(-1);

@@ -1,3 +1,6 @@
+parameters:
+  fos_message.pagination_limit: 10
+
 services:
   _defaults:
     autowire: true
@@ -6,18 +9,19 @@ services:
   FOS\MessageBundle\Repository\:
     resource: '../../Repository'
     
-  FOS\MessageBundle\Controller\InboxController:
-    class: FOS\MessageBundle\Controller\InboxController
+  fos_message.inbox.controller:
+    class: FOS\MessageBundle\Controller\UserMessagesListAwareController
     arguments:
-      - '@fos_message.provider.default'
       - '%template_paths.inbox%'
+      - '%fos_message.pagination_limit%'
+      - ['@fos_message.messages_inbox_provider.provider', 'getMessagesByParticipantOrderByDateAndIsReadStatus']
 
-  FOS\MessageBundle\Controller\SentController:
-    class: FOS\MessageBundle\Controller\SentController
+  fos_message.sent.controller:
+    class: FOS\MessageBundle\Controller\UserMessagesListAwareController
     arguments:
-      - '@fos_message.provider.default'
       - '%template_paths.sent%'
-    public: true
+      - '%fos_message.pagination_limit%'
+      - ['@fos_message.messages_sent_provider.provider', 'getSentMessagesByParticipantOrderByDate']
 
   FOS\MessageBundle\Controller\ThreadCreateController:
     class: FOS\MessageBundle\Controller\ThreadCreateController
@@ -83,3 +87,14 @@ services:
     class: FOS\MessageBundle\Repository\MessageRepository
     arguments:
       - '@doctrine'
+
+  fos_message.messages_inbox_provider.provider:
+    class: FOS\MessageBundle\Repository\MessageRepository
+    arguments:
+      - '@doctrine'
+
+  fos_message.messages_sent_provider.provider:
+    class: FOS\MessageBundle\Repository\MessageRepository
+    arguments:
+      - '@doctrine'
+

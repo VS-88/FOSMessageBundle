@@ -8,6 +8,7 @@ use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use FOS\MessageBundle\FOSMessageBundle;
 use FOS\MessageBundle\Tests\Functional\Entity\UserProvider;
 use FOS\MessageBundle\Tests\Functional\Form\UserToUsernameTransformer;
+use FOS\MessageBundle\Tests\Functional\Repository\DummyParticipantRepository;
 use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -92,6 +93,7 @@ class TestKernel extends Kernel
 
         $c->register('fos_user.user_to_username_transformer', UserToUsernameTransformer::class);
         $c->register('app.user_provider', UserProvider::class);
+
         $c->addCompilerPass(new RegisteringManagersPass());
     }
 }

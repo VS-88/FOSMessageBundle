@@ -6,6 +6,11 @@
 
 <a href="{{ url('fos_message_thread_new' )}}">{% trans from 'FOSMessageBundle' %}send_new{% endtrans %}</a>
 
-{% include '@FOSMessage/Message/threads_list.html.twig' with {'threads': threads} %}
+{% include '@FOSMessage/Message/messages_list.html.twig' with {'list': list} %}
+
+<div class="navigation">
+    {{ knp_pagination_render(list) }}
+</div>
 
 {% endblock %}
+

@@ -8,3 +8,6 @@ services:
 
   FOS\MessageBundle\Tests\Functional\Entity\:
     resource: 'Entity'
+
+  FOS\MessageBundle\Tests\Functional\Repository\:
+    resource: 'Repository'

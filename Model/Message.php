@@ -265,7 +265,7 @@ abstract class Message implements MessageInterface
     /**
      * Get the collection of MessageMetadata.
      *
-     * @return Collection
+     * @return Collection|MessageMetadataInterface[]
      */
     public function getAllMetadata(): Collection
     {
@@ -281,5 +281,19 @@ abstract class Message implements MessageInterface
         $this->metadata->add($meta);
 
         return $this;
+    }
+
+    /**
+     * @return iterable
+     */
+    public function getDestinationParticipants(): iterable
+    {
+        foreach ($this->getAllMetadata() as $metadata) {
+            $participant = $metadata->getParticipant();
+
+            if ($participant->getId() !== $this->getSender()->getId()) {
+                yield $participant;
+            }
+        }
     }
 }

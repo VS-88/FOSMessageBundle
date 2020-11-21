@@ -8,6 +8,7 @@ use FOS\MessageBundle\DataFixtures\MessageMetadata\MessageMetadataFixture;
 use FOS\MessageBundle\DataFixtures\Participant\ParticipantFixture;
 use FOS\MessageBundle\DataFixtures\Thread\ThreadFixture;
 use FOS\MessageBundle\DataFixtures\ThreadMetadata\ThreadMetadataFixture;
+use FOS\MessageBundle\Entity\Message;
 use FOS\MessageBundle\Tests\AbstractDataBaseTestCase;
 
 /**
@@ -23,15 +24,27 @@ class FunctionalTest extends AbstractDataBaseTestCase
         MessageMetadataFixture::class,
     ];
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+    }
+
     /**
      * @test
      */
     public function controllerSent(): void
     {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_1, '', []);
+
         $this->kernelBrowser->request('GET', '/sent');
 
         $response = $this->kernelBrowser->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+
+        file_put_contents(__DIR__ . '/log', $response->getContent());
+
+        static::assertSame(200, $response->getStatusCode());
     }
 
     /**
@@ -39,10 +52,29 @@ class FunctionalTest extends AbstractDataBaseTestCase
      */
     public function controllerInbox(): void
     {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+
+        /**
+         * @var Message[] $messages
+         */
+        $messages = $this->em->getRepository(Message::class)->findAll();
+
+        $message = reset($messages);
+
+        $message->setIsModerated(true);
+
+
+        $this->em->persist($message);
+        $this->em->flush();
+        $this->em->clear();
+
         $this->kernelBrowser->request('GET', '/inbox');
 
         $response = $this->kernelBrowser->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+
+        file_put_contents(__DIR__ . '/log', $response->getContent());
+
+        static::assertSame(200, $response->getStatusCode());
     }
 
     /**
@@ -54,7 +86,7 @@ class FunctionalTest extends AbstractDataBaseTestCase
         $this->kernelBrowser->request('GET', '/deleted');
 
         $response = $this->kernelBrowser->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+        static::assertSame(200, $response->getStatusCode());
     }
 
     /**
@@ -66,7 +98,7 @@ class FunctionalTest extends AbstractDataBaseTestCase
         $this->kernelBrowser->request('GET', '/message/moderate');
 
         $response = $this->kernelBrowser->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+        static::assertSame(200, $response->getStatusCode());
     }
 
     /**
@@ -82,9 +114,6 @@ class FunctionalTest extends AbstractDataBaseTestCase
      */
     protected function getClientServerParams(): array
     {
-        return [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ];
+        return [];
     }
 }

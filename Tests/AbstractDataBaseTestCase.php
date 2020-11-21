@@ -3,17 +3,21 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests;
 
+use App\Entity\User;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Exception;
+use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
 use FOS\MessageBundle\Tests\Functional\WebTestCase;
 use Mockery;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\TestContainer;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -22,6 +26,8 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
  * Class AbstractDataBaseTestCase
@@ -80,6 +86,7 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
         $this->purger = new ORMPurger($this->em);
 
         $this->lazyCreateTables($this->testContainer);
+        $this->purger->purge();
 
         $this->em->beginTransaction();
 
@@ -185,5 +192,52 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
 
             self::$tablesAreCreated = true;
         }
+    }
+
+    /**
+     * @param string $email
+     * @param string $password
+     * @param array $rolesToAppend
+     *
+     * @return UserInterface
+     *
+     * @throws Exception
+     */
+    protected function logIn(string $email, string $password, array $rolesToAppend): UserInterface
+    {
+        $session = $this->testContainer->get('session');
+
+        /**
+         * @var UserInterface[] $users
+         */
+        $users = $this->em->getRepository(DummyParticipant::class)->findBy(['email' => $email]);
+
+
+        if (empty($users)) {
+            $user  = new DummyParticipant();
+
+            $user
+                ->setEmail($email)
+                ->setPassword($password)
+                ->setRoles($rolesToAppend);
+        } else {
+            $user = reset($users);
+
+            $user->setRoles(
+                array_unique(array_merge($user->getRoles(), $rolesToAppend))
+            );
+        }
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        $token = new PostAuthenticationGuardToken($user, 'app_user_provider', $user->getRoles());
+        $session->set('_security_main', serialize($token));
+        $session->save();
+
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $this->kernelBrowser->getCookieJar()->set($cookie);
+
+        return $user;
     }
 }

@@ -1,0 +1,56 @@
+<table>
+
+    <thead>
+        <tr>
+            <th>{% trans from 'FOSMessageBundle' %}subject{% endtrans %}</th>
+            <th>{% trans from 'FOSMessageBundle' %}body{% endtrans %}</th>
+            <th>{% trans from 'FOSMessageBundle' %}startdate{% endtrans %}</th>
+            <th>{% trans from 'FOSMessageBundle' %}last_message{% endtrans %}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% if list %}
+        {% for message in list %}
+            <tr>
+                <td>
+                    <a href="{{ url('fos_message_thread_view', {'threadId': message.thread.id}) }}">
+                        {{ message.thread.subject }}
+                    </a>
+
+                    {% if not fos_message_is_read(message.thread) %}
+                        ({% trans from 'FOSMessageBundle' %}new{% endtrans %})
+                    {% endif %}
+                </td>
+                <td>
+                    {{ message.body }}
+                </td>
+                <td>
+                    {{ message.createdAt|date }}
+                </td>
+                <td>
+                    {% if message.thread.lastMessage %}
+                        <a href="{{ url('fos_message_thread_view', {'threadId': message.thread.id}) }}#message_{{ message.thread.lastMessage.id }}" title="{% trans from 'FOSMessageBundle' %}goto_last{% endtrans %}">
+                            →
+                        </a>
+                        {% trans with {'%date%': message.thread.lastMessage.createdAt|date} from 'FOSMessageBundle' %}on{% endtrans %}
+                        <br />
+                        {% trans with {'%sender%': message.thread.lastMessage.sender.email|e } from 'FOSMessageBundle' %}by{% endtrans %}
+                    {% else %}
+                        ----
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="6">
+                {% trans from 'FOSMessageBundle' %}no_thread{% endtrans %}.
+            </td>
+        </tr>
+    {% endif %}
+
+    </tbody>
+
+</table>

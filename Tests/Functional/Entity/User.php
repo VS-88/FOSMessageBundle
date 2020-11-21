@@ -9,12 +9,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * Class User
  * @package FOS\MessageBundle\Tests\Functional\Entity
  */
-class User extends DummyParticipant implements UserInterface
+class User extends DummyParticipant
 {
     /**
      * @return string
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return 'guilhem';
     }
@@ -22,27 +22,8 @@ class User extends DummyParticipant implements UserInterface
     /**
      * @return string|null
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return 'pass';
-    }
-
-    /**
-     * @return string|void|null
-     */
-    public function getSalt()
-    {
-    }
-
-    /**
-     * @return array|string[]
-     */
-    public function getRoles()
-    {
-        return [];
-    }
-
-    public function eraseCredentials()
-    {
     }
 }

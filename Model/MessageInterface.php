@@ -110,4 +110,9 @@ interface MessageInterface extends ReadableInterface
      * @return MessageMetadata
      */
     public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadataInterface;
+
+    /**
+     * @return array
+     */
+    public function getDestinationParticipants(): iterable;
 }

@@ -16,6 +16,14 @@ class ParticipantFixture extends AbstractFixture
     public const REFERENCE_PARTICIPANT_1 = 'participant_1';
     public const REFERENCE_PARTICIPANT_2 = 'participant_2';
 
+    public const PARTICIPANT_EMAIL_1    = 'test1@test.org';
+    public const PARTICIPANT_EMAIL_2    = 'test2@test.org';
+
+    private const REF_TO_EMAIL = [
+        self::REFERENCE_PARTICIPANT_1 => self::PARTICIPANT_EMAIL_1,
+        self::REFERENCE_PARTICIPANT_2 => self::PARTICIPANT_EMAIL_2,
+    ];
+
     /**
      * {@inheritDoc}
      */
@@ -23,6 +31,10 @@ class ParticipantFixture extends AbstractFixture
     {
         foreach ([self::REFERENCE_PARTICIPANT_1, self::REFERENCE_PARTICIPANT_2] as $ref) {
             $entity = new DummyParticipant();
+
+            $email = self::REF_TO_EMAIL[$ref];
+
+            $entity->setEmail($email)->setRoles(['role_admin'])->setPassword('pass123');
 
             $manager->persist($entity);
             $manager->flush();

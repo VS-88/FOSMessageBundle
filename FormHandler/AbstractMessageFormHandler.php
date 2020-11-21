@@ -5,6 +5,7 @@ namespace FOS\MessageBundle\FormHandler;
 
 use Exception;
 use FOS\MessageBundle\Composer\ComposerInterface;
+use FOS\MessageBundle\Exceptions\SubmittedMessageValidationException;
 use FOS\MessageBundle\FormModel\AbstractMessage;
 use FOS\MessageBundle\Model\MessageAttachmentFactoryInterface;
 use FOS\MessageBundle\Model\MessageInterface;
@@ -84,7 +85,9 @@ abstract class AbstractMessageFormHandler
      * @param Request $request
      *
      * @return MessageInterface|null the sent message if the form is bound and valid, false otherwise
+     *
      * @throws Exception
+     * @throws SubmittedMessageValidationException
      */
     public function process(FormInterface $form, Request $request): ?MessageInterface
     {
@@ -115,7 +118,7 @@ abstract class AbstractMessageFormHandler
             return $message;
         }
 
-        return null;
+        throw new SubmittedMessageValidationException($form->getErrors(), 'Form data is invalid');
     }
 
     /**

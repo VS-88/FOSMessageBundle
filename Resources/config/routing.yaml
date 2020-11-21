@@ -1,12 +1,12 @@
 fos_message_inbox:
   path: /inbox
   methods: GET
-  controller: FOS\MessageBundle\Controller\InboxController::inboxAction
+  controller: fos_message.inbox.controller::indexAction
 
 fos_message_sent:
   path: /sent
   methods: GET
-  controller: FOS\MessageBundle\Controller\SentController::indexAction
+  controller: fos_message.sent.controller::indexAction
 
 fos_message_deleted:
   path: /deleted
