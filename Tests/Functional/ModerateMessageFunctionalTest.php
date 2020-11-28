@@ -32,6 +32,8 @@ class ModerateMessageFunctionalTest extends AbstractDataBaseTestCase
      */
     public function moderationFormAccessSuccess(): void
     {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+
         $repo = $this->em->getRepository(Message::class);
 
         /**
@@ -50,6 +52,8 @@ class ModerateMessageFunctionalTest extends AbstractDataBaseTestCase
      */
     public function moderationFormAccessNotFoundCase(): void
     {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+
         $this->kernelBrowser->request('GET', '/message/moderate/0');
 
         $response = $this->kernelBrowser->getResponse();
@@ -61,6 +65,8 @@ class ModerateMessageFunctionalTest extends AbstractDataBaseTestCase
      */
     public function updateIsModeratedFlagSuccess(): void
     {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+
         $repo = $this->em->getRepository(Message::class);
 
         $this->kernelBrowser->disableReboot();
@@ -101,16 +107,5 @@ class ModerateMessageFunctionalTest extends AbstractDataBaseTestCase
     protected function getFixtures(): array
     {
         return self::FIXTURES;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getClientServerParams(): array
-    {
-        return [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ];
     }
 }

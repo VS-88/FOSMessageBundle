@@ -113,10 +113,12 @@ class Provider implements ProviderInterface
     public function getThread($threadId): ?ThreadInterface
     {
         $thread = $this->threadManager->findThreadById($threadId);
+
         if (!$thread) {
             throw new NotFoundHttpException('There is no such thread');
         }
-        if (!$this->authorizer->canSeeThread($thread)) {
+
+        if ($this->authorizer->canSeeThread($thread) === false) {
             throw new AccessDeniedException('You are not allowed to see this thread');
         }
         // Load the thread messages before marking them as read

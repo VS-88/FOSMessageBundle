@@ -31,6 +31,8 @@ class MessageAttachmentDownloadFunctionalTest extends AbstractDataBaseTestCase
      */
     public function downloadAccessGranted(): void
     {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+
         $repo = $this->em->getRepository(MessageAttachment::class);
 
         /**
@@ -50,6 +52,8 @@ class MessageAttachmentDownloadFunctionalTest extends AbstractDataBaseTestCase
      */
     public function downloadAccessDenied(): void
     {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+
         $repo = $this->em->getRepository(MessageAttachment::class);
 
         /**
@@ -69,16 +73,5 @@ class MessageAttachmentDownloadFunctionalTest extends AbstractDataBaseTestCase
     protected function getFixtures(): array
     {
         return self::FIXTURES;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getClientServerParams(): array
-    {
-        return [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ];
     }
 }

@@ -42,8 +42,6 @@ class FunctionalTest extends AbstractDataBaseTestCase
 
         $response = $this->kernelBrowser->getResponse();
 
-        file_put_contents(__DIR__ . '/log', $response->getContent());
-
         static::assertSame(200, $response->getStatusCode());
     }
 
@@ -71,8 +69,6 @@ class FunctionalTest extends AbstractDataBaseTestCase
         $this->kernelBrowser->request('GET', '/inbox');
 
         $response = $this->kernelBrowser->getResponse();
-
-        file_put_contents(__DIR__ . '/log', $response->getContent());
 
         static::assertSame(200, $response->getStatusCode());
     }

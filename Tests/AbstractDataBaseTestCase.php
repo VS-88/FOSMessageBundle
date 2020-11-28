@@ -3,14 +3,12 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests;
 
-use App\Entity\User;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Exception;
-use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
 use FOS\MessageBundle\Tests\Functional\WebTestCase;
 use Mockery;
@@ -237,6 +235,8 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
 
         $cookie = new Cookie($session->getName(), $session->getId());
         $this->kernelBrowser->getCookieJar()->set($cookie);
+
+        $this->em->clear();
 
         return $user;
     }

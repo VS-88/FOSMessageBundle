@@ -58,6 +58,11 @@ class ThreadMetadataFixture extends AbstractFixture implements DependentFixtureI
             ->setIsDeleted(false)
             ->setLastMessageDate($dt);
 
+        $manager->persist($entity1);
+        $manager->persist($entity2);
+
+        $manager->flush();
+
         $this->addReference(self::REFERENCE_THREAD_META_DATA_FOR_PARTICIPANT_1, $entity1);
         $this->addReference(self::REFERENCE_THREAD_META_DATA_FOR_PARTICIPANT_2, $entity2);
     }

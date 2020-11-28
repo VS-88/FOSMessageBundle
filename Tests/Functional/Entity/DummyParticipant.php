@@ -5,13 +5,12 @@ namespace FOS\MessageBundle\Tests\Functional\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FOS\MessageBundle\Model\ParticipantInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Table(name="fos_message_participant")
  * @ORM\Entity(repositoryClass="FOS\MessageBundle\Tests\Functional\Repository\DummyParticipantRepository")
  */
-class DummyParticipant implements ParticipantInterface, UserInterface
+class DummyParticipant implements ParticipantInterface
 {
     /**
      * @var int
@@ -124,5 +123,21 @@ class DummyParticipant implements ParticipantInterface, UserInterface
     public function eraseCredentials()
     {
         // NOP
+    }
+
+    /**
+     * @return string|null
+     */
+    public function __toString()
+    {
+        return $this->getEmail();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles(), true);
     }
 }

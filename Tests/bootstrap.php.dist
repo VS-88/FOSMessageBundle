@@ -30,8 +30,8 @@ $conf = [
         'host' => 'localhost',
         'user' => 'root',
         'dbname' => 'fos_message_test',
-        'port' => '3306',
-        'password' => '123',
+        'port' => '3308',
+        'password' => '',
         'options' => ['x_reconnect_attempts' => 10],
     ],
     'orm' => [

@@ -6,9 +6,8 @@ namespace FOS\MessageBundle\Tests\Functional;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use FOS\MessageBundle\FOSMessageBundle;
-use FOS\MessageBundle\Tests\Functional\Entity\UserProvider;
+use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
 use FOS\MessageBundle\Tests\Functional\Form\UserToUsernameTransformer;
-use FOS\MessageBundle\Tests\Functional\Repository\DummyParticipantRepository;
 use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -75,7 +74,14 @@ class TestKernel extends Kernel
         ]);
 
         $c->loadFromExtension('security', [
-            'providers' => ['permissive' => ['id' => 'app.user_provider']],
+            'providers' => [
+                'app_user_provider' => [
+                    'entity' => [
+                        'class' => DummyParticipant::class,
+                        'property' => 'email',
+                    ],
+                ],
+            ],
             'encoders' => [User::class => 'plaintext'],
             'firewalls' => ['main' => ['http_basic' => true]],
         ]);
@@ -91,8 +97,9 @@ class TestKernel extends Kernel
             'path_to_message_attachments_dir' => __DIR__ . DIRECTORY_SEPARATOR . 'var',
         ]);
 
-        $c->register('fos_user.user_to_username_transformer', UserToUsernameTransformer::class);
-        $c->register('app.user_provider', UserProvider::class);
+        $c->register('fos_user.user_to_username_transformer', UserToUsernameTransformer::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true);
 
         $c->addCompilerPass(new RegisteringManagersPass());
     }

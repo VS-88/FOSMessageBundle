@@ -73,7 +73,7 @@ class ThreadCreateController extends AbstractController
             /**
              * @var FormError $error
              */
-            foreach ($exception->getErrors() as $error) {
+            foreach ($exception->getFormErrors() as $error) {
                 $this->addFlash('error', $error->getMessage());
             }
 
