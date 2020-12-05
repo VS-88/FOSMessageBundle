@@ -2,7 +2,7 @@
 
 {% block fos_message_content %}
     <table>
-    {% if list > 0%}
+    {% if list.count > 0 %}
             <thead>
             <tr>
                 <th>{% trans from 'FOSMessageBundle' %}id{% endtrans %}</th>
