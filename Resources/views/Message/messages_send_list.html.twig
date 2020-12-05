@@ -26,9 +26,7 @@
                     {{ message.createdAt|date }}
                 </td>
                 <td>
-                    {% for user in message.destinationParticipants %}
-                        {{ user.username }}{% if not loop.last %}, {% endif %}
-                    {% endfor %}
+                    {{ message.destinationParticipantsAsStr }}
                 </td>
             </tr>
         {% endfor %}

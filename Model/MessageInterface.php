@@ -112,7 +112,12 @@ interface MessageInterface extends ReadableInterface
     public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadataInterface;
 
     /**
-     * @return array
+     * @return iterable
      */
     public function getDestinationParticipants(): iterable;
+
+    /**
+     * @return string
+     */
+    public function getDestinationParticipantsAsStr(string $separator = ','): string;
 }

@@ -7,6 +7,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use InvalidArgumentException;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 /**
  * Abstract message model.
@@ -295,5 +296,15 @@ abstract class Message implements MessageInterface
                 yield $participant;
             }
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getDestinationParticipantsAsStr(string $separator = ','): string
+    {
+        $result = iterator_to_array($this->getDestinationParticipants());
+
+        return implode($separator, $result);
     }
 }
