@@ -1,8 +1,8 @@
 {% extends '@FOSMessage/layout.html.twig' %}
 
 {% block fos_message_content %}
+    <table>
     {% if list %}
-        <table>
             <thead>
             <tr>
                 <th>{% trans from 'FOSMessageBundle' %}id{% endtrans %}</th>
@@ -27,7 +27,6 @@
             <div class="navigation">
                 {{ knp_pagination_render(list) }}
             </div>
-        </table>
     {% else %}
         <tr>
             <td colspan="6">
@@ -35,4 +34,5 @@
             </td>
         </tr>
     {% endif %}
+    </table>
 {% endblock %}
