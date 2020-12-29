@@ -22,12 +22,12 @@ fos_message_thread_new:
   controller: FOS\MessageBundle\Controller\ThreadCreateController::indexAction
 
 fos_message_thread_delete:
-  path: /{threadId}/delete
+  path: /delete/{threadId}
   methods: POST|DELETE
   controller: FOS\MessageBundle\Controller\ThreadDeleteController::indexAction
 
 fos_message_thread_undelete:
-  path: /{threadId}/undelete
+  path: /undelete/{threadId}
   methods: POST
   controller: FOS\MessageBundle\Controller\ThreadUndeleteController::indexAction
 

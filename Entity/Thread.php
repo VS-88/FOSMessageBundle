@@ -26,7 +26,7 @@ class Thread extends \FOS\MessageBundle\Model\Thread
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     protected $id;
 
@@ -43,7 +43,8 @@ class Thread extends \FOS\MessageBundle\Model\Thread
     /**
      * @ORM\OneToMany(
      *   targetEntity="Message",
-     *   mappedBy="thread"
+     *   mappedBy="thread",
+     *   cascade={"all"}
      * )
      * @var Message[]|Collection
      */

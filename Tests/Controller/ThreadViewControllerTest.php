@@ -12,6 +12,7 @@ use FOS\MessageBundle\DataFixtures\ThreadMetadata\ThreadMetadataFixture;
 use FOS\MessageBundle\Entity\Message;
 use FOS\MessageBundle\Entity\Thread;
 use FOS\MessageBundle\Tests\AbstractDataBaseTestCase;
+use FOS\MessageBundle\Tests\Functional\DummyAccessDecisionManager;
 
 /**
  * Class ThreadCreateController
@@ -46,6 +47,8 @@ class ThreadViewControllerTest extends AbstractDataBaseTestCase
      */
     public function getRequestIndexAction(): void
     {
+        $this->testContainer->set('security.access.decision_manager', new DummyAccessDecisionManager());
+
         $this->kernelBrowser->request('GET', '/' . $this->thread->getId());
 
         $response = $this->kernelBrowser->getResponse();
@@ -58,6 +61,8 @@ class ThreadViewControllerTest extends AbstractDataBaseTestCase
      */
     public function replyThread(): void
     {
+        $this->testContainer->set('security.access.decision_manager', new DummyAccessDecisionManager());
+
         $this->kernelBrowser->disableReboot();
 
         $uri = '/' . $this->thread->getId();

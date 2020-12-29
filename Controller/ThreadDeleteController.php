@@ -3,13 +3,13 @@ declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
 use FOS\MessageBundle\Deleter\DeleterInterface;
-use FOS\MessageBundle\Model\ThreadInterface;
 use FOS\MessageBundle\ModelManager\ThreadManagerInterface;
-use FOS\MessageBundle\Provider\ProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class ThreadDeleteController
@@ -27,26 +27,25 @@ class ThreadDeleteController extends AbstractController
     protected $deleter;
 
     /**
-     * @var ProviderInterface
+     * @var AuthorizationCheckerInterface
      */
-    private $provider;
+    private $authorizationChecker;
 
     /**
      * ThreadDeleteController constructor.
      *
-     * @param ProviderInterface $provider
      * @param DeleterInterface $deleter
      * @param ThreadManagerInterface $threadManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
-        ProviderInterface $provider,
         DeleterInterface $deleter,
-        ThreadManagerInterface $threadManager
+        ThreadManagerInterface $threadManager,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
-        $this->provider = $provider;
-
         $this->threadManager = $threadManager;
         $this->deleter       = $deleter;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -58,19 +57,22 @@ class ThreadDeleteController extends AbstractController
      */
     public function indexAction(int $threadId): Response
     {
-        $thread = $this->provider->getThread($threadId);
+        /**
+         * @var EntityManager $em
+         */
+        $thread = $this->threadManager->findThreadById($threadId);
 
-        $this->processThread($thread);
+        if ($thread !== null) {
+            if ($this->authorizationChecker->isGranted('DELETE', $thread) === false) {
+                throw $this->createAccessDeniedException();
+            }
+        } else {
+            $this->createNotFoundException();
+        }
+
+        $this->deleter->markAsDeleted($thread);
         $this->threadManager->saveThread($thread);
 
         return $this->redirectToRoute('fos_message_inbox');
-    }
-
-    /**
-     * @param ThreadInterface $thread
-     */
-    protected function processThread(ThreadInterface $thread): void
-    {
-        $this->deleter->markAsDeleted($thread);
     }
 }

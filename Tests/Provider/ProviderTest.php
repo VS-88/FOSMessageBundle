@@ -166,13 +166,11 @@ class ProviderTest extends AbstractTestCase
             ->with($threadId)
             ->andReturn($thread);
 
-        $this->authorizer->shouldReceive('canSeeThread')->once()->with($thread)->andReturnTrue();
-
         $thread->shouldReceive('getMessages')->once();
 
         $this->threadReader->shouldReceive('markAsRead')->once()->with($thread);
 
-        $actual = $this->service->getThread($threadId);
+        $actual = $this->service->getThreadAndMarkAsRead($threadId);
 
         self::assertSame($thread, $actual);
     }
@@ -191,29 +189,8 @@ class ProviderTest extends AbstractTestCase
             ->with($threadId)
             ->andReturnNull();
 
-        $this->service->getThread($threadId);
+        $this->service->getThreadAndMarkAsRead($threadId);
     }
-
-    /**
-     * @test
-     */
-    public function getThreadAccessDenied(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $threadId = 7;
-
-        $thread = \Mockery::mock(ThreadInterface::class);
-        $this->threadManager->shouldReceive('findThreadById')
-            ->once()
-            ->with($threadId)
-            ->andReturn($thread);
-
-        $this->authorizer->shouldReceive('canSeeThread')->once()->with($thread)->andReturnFalse();
-
-        $this->service->getThread($threadId);
-    }
-
 
     /**
      * @test

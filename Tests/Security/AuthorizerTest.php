@@ -42,30 +42,6 @@ class AuthorizerTest extends AbstractTestCase
     /**
      * @test
      */
-    public function canSeeThread(): void
-    {
-        $thread      = Mockery::mock(ThreadInterface::class);
-        $participant = Mockery::mock(ParticipantInterface::class);
-
-        $participant->shouldReceive('isAdmin')->once()->andReturnFalse();
-
-        $this->participantProvider->shouldReceive('getAuthenticatedParticipant')
-            ->twice()
-            ->withNoArgs()
-            ->andReturn($participant);
-
-        $thread->shouldReceive('isParticipant')->twice()->with($participant)->andReturnTrue();
-
-        self::assertTrue($this->service->canSeeThread($thread));
-
-        $participant->shouldReceive('isAdmin')->once()->andReturnFalse();
-
-        self::assertTrue($this->service->canDeleteThread($thread));
-    }
-
-    /**
-     * @test
-     */
     public function canMessageParticipant(): void
     {
         $participant = Mockery::mock(ParticipantInterface::class);

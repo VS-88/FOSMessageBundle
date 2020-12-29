@@ -102,7 +102,11 @@ abstract class AbstractDataBaseTestCase extends WebTestCase
     {
         Mockery::close();
 
-        $this->purger->purge();
+        try {
+            $this->purger->purge();
+        } catch (\Exception $e) {
+
+        }
 
         parent::tearDown();
     }

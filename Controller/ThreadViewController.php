@@ -10,6 +10,7 @@ use FOS\MessageBundle\Provider\ProviderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Class ThreadViewController
@@ -27,23 +28,31 @@ class ThreadViewController extends AbstractProviderAwareController
     private $replyFormHandler;
 
     /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
+
+    /**
      * ThreadViewController constructor.
      *
      * @param ProviderInterface $provider
      * @param string $messageInboxTemplatePath
      * @param AbstractMessageFormFactory $replyMessageFormFactory
      * @param AbstractMessageFormHandler $newFormHandler
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         ProviderInterface $provider,
         string $messageInboxTemplatePath,
         AbstractMessageFormFactory $replyMessageFormFactory,
-        AbstractMessageFormHandler $newFormHandler
+        AbstractMessageFormHandler $newFormHandler,
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         parent::__construct($provider, $messageInboxTemplatePath);
 
         $this->replyMessageFormFactory = $replyMessageFormFactory;
         $this->replyFormHandler        = $newFormHandler;
+        $this->authorizationChecker    = $authorizationChecker;
     }
 
     /**
@@ -56,7 +65,16 @@ class ThreadViewController extends AbstractProviderAwareController
      */
     public function indexAction(Request $request, int $threadId): Response
     {
-        $thread      = $this->provider->getThread($threadId);
+        $thread      = $this->provider->getThreadAndMarkAsRead($threadId);
+
+        if ($thread !== null) {
+            if ($this->authorizationChecker->isGranted('VIEW', $thread) === false) {
+                throw $this->createAccessDeniedException();
+            }
+        } else {
+            $this->createNotFoundException();
+        }
+
         $form        = $this->replyMessageFormFactory->create($thread);
 
         try {

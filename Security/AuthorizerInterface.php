@@ -12,25 +12,6 @@ use FOS\MessageBundle\Model\ThreadInterface;
  */
 interface AuthorizerInterface
 {
-    /**
-     * Tells if the current user is allowed
-     * to see this thread.
-     *
-     * @param ThreadInterface $thread
-     *
-     * @return bool
-     */
-    public function canSeeThread(ThreadInterface $thread): bool;
-
-    /**
-     * Tells if the current participant is allowed
-     * to delete this thread.
-     *
-     * @param ThreadInterface $thread
-     *
-     * @return bool
-     */
-    public function canDeleteThread(ThreadInterface $thread): bool;
 
     /**
      * Tells if the current participant is allowed

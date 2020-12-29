@@ -3,104 +3,63 @@ declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Tests\Controller;
 
-use FOS\MessageBundle\Controller\InboxController;
-use FOS\MessageBundle\Controller\ThreadDeleteController;
-use FOS\MessageBundle\Deleter\DeleterInterface;
-use FOS\MessageBundle\Model\ThreadInterface;
-use FOS\MessageBundle\ModelManager\ThreadManagerInterface;
-use FOS\MessageBundle\Provider\ProviderInterface;
-use FOS\MessageBundle\Tests\AbstractTestCase;
-use FOS\MessageBundle\Tests\PartialMockAwareTrait;
-use Mockery\LegacyMockInterface;
-use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use FOS\MessageBundle\DataFixtures\Message\MessageFixture;
+use FOS\MessageBundle\DataFixtures\MessageAttachment\MessageAttachmentFixture;
+use FOS\MessageBundle\DataFixtures\MessageMetadata\MessageMetadataFixture;
+use FOS\MessageBundle\DataFixtures\Participant\ParticipantFixture;
+use FOS\MessageBundle\DataFixtures\Thread\ThreadFixture;
+use FOS\MessageBundle\DataFixtures\ThreadMetadata\ThreadMetadataFixture;
+use FOS\MessageBundle\Entity\Thread;
+use FOS\MessageBundle\Tests\AbstractDataBaseTestCase;
+use FOS\MessageBundle\Tests\Functional\DummyAccessDecisionManager;
 
 /**
  * Class ThreadDeleteControllerTest
  */
-class ThreadDeleteControllerTest extends AbstractTestCase
+class ThreadDeleteControllerTest extends AbstractDataBaseTestCase
 {
-    use PartialMockAwareTrait;
+    public const FIXTURES = [
+        ParticipantFixture::class,
+        ThreadFixture::class,
+        MessageFixture::class,
+        ThreadMetadataFixture::class,
+        MessageMetadataFixture::class,
+        MessageAttachmentFixture::class,
+    ];
 
     /**
-     * @var DeleterInterface|MockInterface
+     * @var Thread|object|null
      */
-    protected $deleter;
-
-    /**
-     * @var ThreadManagerInterface
-     */
-    private $threadManager;
-
-    private const PATH_TO_TEMPLATE = '/path/to/template';
-
-    /**
-     * @var ProviderInterface|LegacyMockInterface|MockInterface
-     */
-    private $provider;
-
-    /**
-     * @var ThreadDeleteController|MockInterface
-     */
-    private $controller;
+    private $thread;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->provider = \Mockery::mock(ProviderInterface::class);
-        $this->threadManager = \Mockery::mock(ThreadManagerInterface::class);
-        $this->deleter = \Mockery::mock(DeleterInterface::class);
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
 
-        $this->controller = $this->getClassPartialMock(
-            ThreadDeleteController::class,
-            [
-                $this->provider,
-                $this->deleter,
-                $this->threadManager
-            ],
-            [
-                'redirectToRoute'
-            ]
-        );
+        $this->thread = $this->em->getRepository(Thread::class)->findOneBy(['subject' => 'test']);
     }
 
     /**
      * @test
      */
-    public function indexAction(): void
+    public function getRequestIndexAction(): void
     {
-        $id = 1;
-        $response = \Mockery::mock(RedirectResponse::class);
-        $thread = \Mockery::mock(ThreadInterface::class);
+        $this->testContainer->set('security.access.decision_manager', new DummyAccessDecisionManager());
 
-        $this->provider->shouldReceive('getThread')
-            ->once()
-            ->with($id)
-            ->andReturn($thread);
+        $this->kernelBrowser->request('DELETE', '/delete/' . $this->thread->getId());
 
-        $this->deleter->shouldReceive('markAsDeleted')
-            ->once()
-            ->with($thread)
-            ->andReturnNull();
+        $response = $this->kernelBrowser->getResponse();
 
-        $this->threadManager->shouldReceive('saveThread')
-            ->once()
-            ->with($thread)
-            ->andReturnNull();
+        static::assertSame(302, $response->getStatusCode());
+    }
 
-        $this->controller->shouldReceive('redirectToRoute')
-            ->once()
-            ->with(
-                'fos_message_inbox'
-            )
-            ->andReturn($response);
-
-        $actual = $this->controller->indexAction($id);
-
-        self::assertSame($response, $actual);
+    /**
+     * @return array
+     */
+    protected function getFixtures(): array
+    {
+        return self::FIXTURES;
     }
 }

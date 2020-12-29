@@ -80,18 +80,7 @@ class DeleterTest extends AbstractTestCase
             ->once()
             ->with($participant, true);
 
-        $this->authorizer->shouldReceive('canDeleteThread')->once($thread)->andReturnTrue();
-
         $expectedEvent = new ThreadEvent($thread);
-
-        $this->dispatcher->shouldReceive('dispatch')
-            ->once()
-            ->with(
-                \Mockery::on(static function (ThreadEvent $event) use ($expectedEvent) {
-                    return $event->getThread() === $expectedEvent->getThread();
-                }),
-                true
-            );
 
         self::assertNull($this->service->markAsDeleted($thread));
     }
@@ -113,33 +102,6 @@ class DeleterTest extends AbstractTestCase
             ->once()
             ->with($participant, false);
 
-        $this->authorizer->shouldReceive('canDeleteThread')->once($thread)->andReturnTrue();
-
-        $expectedEvent = new ThreadEvent($thread);
-
-        $this->dispatcher->shouldReceive('dispatch')
-            ->once()
-            ->with(
-                \Mockery::on(static function (ThreadEvent $event) use ($expectedEvent) {
-                    return $event->getThread() === $expectedEvent->getThread();
-                }),
-                true
-            );
-
         self::assertNull($this->service->markAsUnDeleted($thread));
-    }
-
-    /**
-     * @test
-     */
-    public function markAsDeletedNotAllowedCase(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $thread = \Mockery::mock(ThreadInterface::class);
-
-        $this->authorizer->shouldReceive('canDeleteThread')->once($thread)->andReturnFalse();
-
-        $this->service->markAsDeleted($thread);
     }
 }

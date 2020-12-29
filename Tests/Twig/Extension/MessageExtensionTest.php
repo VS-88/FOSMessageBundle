@@ -66,20 +66,6 @@ class MessageExtensionTest extends AbstractTestCase
         $this->assertFalse($this->extension->isRead($readAble));
     }
 
-    public function testCanDeleteThreadWhenHasPermission()
-    {
-        $thread = $this->getThreadMock();
-        $this->authorizer->expects($this->once())->method('canDeleteThread')->with($thread)->will($this->returnValue(true));
-        $this->assertTrue($this->extension->canDeleteThread($thread));
-    }
-
-    public function testCanDeleteThreadWhenNoPermission()
-    {
-        $thread = $this->getThreadMock();
-        $this->authorizer->expects($this->once())->method('canDeleteThread')->with($thread)->will($this->returnValue(false));
-        $this->assertFalse($this->extension->canDeleteThread($thread));
-    }
-
     public function testIsThreadDeletedByParticipantWhenDeleted()
     {
         $thread = $this->getThreadMock();

@@ -37,7 +37,11 @@ services:
   fos_message.deleter.default:
     class: FOS\MessageBundle\Deleter\Deleter
     public: false
-    arguments: ['@fos_message.authorizer', '@fos_message.participant_provider', '@event_dispatcher']
+    arguments:
+      - '@fos_message.authorizer'
+      - '@fos_message.participant_provider'
+      - '@event_dispatcher'
+      - '@doctrine.orm.entity_manager'
 
   fos_message.twig_extension.default:
     class: FOS\MessageBundle\Twig\Extension\MessageExtension

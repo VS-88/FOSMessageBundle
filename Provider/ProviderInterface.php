@@ -41,7 +41,7 @@ interface ProviderInterface
      * @param $threadId
      * @return ThreadInterface
      */
-    public function getThread($threadId): ?ThreadInterface;
+    public function getThreadAndMarkAsRead($threadId): ?ThreadInterface;
 
     /**
      * Tells how many unread messages the authenticated participant has.

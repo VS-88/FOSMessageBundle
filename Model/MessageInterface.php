@@ -92,7 +92,7 @@ interface MessageInterface extends ReadableInterface
     /**
      * Get the collection of MessageMetadata.
      *
-     * @return Collection
+     * @return Collection|\FOS\MessageBundle\Entity\MessageMetadata[]
      */
     public function getAllMetadata(): Collection;
 
