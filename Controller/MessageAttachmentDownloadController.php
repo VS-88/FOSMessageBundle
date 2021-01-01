@@ -68,7 +68,7 @@ class MessageAttachmentDownloadController extends AbstractController
         $messageAttachment = $this->em->find($this->messageAttachmentEntityClass, $messageAttachmentId);
 
         if ($messageAttachment !== null) {
-            if ($this->authorizationChecker->isGranted('VIEW', $messageAttachment->getMessage()) === false) {
+            if ($this->authorizationChecker->isGranted('VIEW', $messageAttachment) === false) {
                 throw $this->createAccessDeniedException('Доступен запрещен!');
             }
 
