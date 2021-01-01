@@ -54,13 +54,14 @@ class MessageRepository extends ServiceEntityRepository implements ModerationAwa
     public function getMessagesByParticipantOrderByDateAndIsReadStatus(ParticipantInterface $participant): AQ
     {
         $dql   = "SELECT m FROM FOS\MessageBundle\Entity\Message m
-                    JOIN FOS\MessageBundle\Entity\MessageMetadata mm
+                    JOIN FOS\MessageBundle\Entity\MessageMetadata mm WITH mm.message = m.id
                     WHERE m.isModerated = 1 
                     AND m.sender != :participant_id
                     AND mm.participant = :participant_id
                   ORDER BY m.createdAt DESC, mm.isRead DESC" ;
 
         $query = $this->getEntityManager()->createQuery($dql);
+
         $query->setParameter('participant_id', $participant->getId());
 
         return $query;
