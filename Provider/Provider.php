@@ -145,4 +145,9 @@ class Provider implements ProviderInterface
     {
         return $this->participantProvider->getAuthenticatedParticipant();
     }
+
+    public function findThreadById(int $id): ThreadInterface
+    {
+        return $this->threadManager->findThreadById($id);
+    }
 }

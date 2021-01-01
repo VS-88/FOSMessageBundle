@@ -65,7 +65,7 @@ class ThreadViewController extends AbstractProviderAwareController
      */
     public function indexAction(Request $request, int $threadId): Response
     {
-        $thread      = $this->provider->getThreadAndMarkAsRead($threadId);
+        $thread = $this->provider->findThreadById($threadId);
 
         if ($thread !== null) {
             if ($this->authorizationChecker->isGranted('VIEW', $thread) === false) {
@@ -76,6 +76,7 @@ class ThreadViewController extends AbstractProviderAwareController
         }
 
         $form        = $this->replyMessageFormFactory->create($thread);
+        $thread      = $this->provider->getThreadAndMarkAsRead($threadId);
 
         try {
             if ($message = $this->replyFormHandler->process($form, $request)) {

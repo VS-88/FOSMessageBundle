@@ -49,4 +49,10 @@ interface ProviderInterface
      * @return int the number of unread messages
      */
     public function getNbUnreadMessages(): int;
+
+    /**
+     * @param int $id
+     * @return ThreadInterface
+     */
+    public function findThreadById(int $id): ThreadInterface;
 }
