@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  FOS\MessageBundle\DataFixtures\:
+    resource: '../../DataFixtures'
+
+  FOS\MessageBundle\Tests\Functional\Entity\:
+    resource: 'Entity'
+
+  FOS\MessageBundle\Tests\Functional\Repository\:
+    resource: 'Repository'

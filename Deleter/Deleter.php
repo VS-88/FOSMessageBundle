@@ -3,13 +3,10 @@ declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Deleter;
 
-use FOS\MessageBundle\Event\FOSMessageEvents;
-use FOS\MessageBundle\Event\ThreadEvent;
 use FOS\MessageBundle\Model\ThreadInterface;
 use FOS\MessageBundle\Security\AuthorizerInterface;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Marks threads as deleted.
@@ -60,7 +57,7 @@ class Deleter implements DeleterInterface
      */
     public function markAsDeleted(ThreadInterface $thread): void
     {
-        $this->mark($thread, true, FOSMessageEvents::POST_DELETE);
+        $this->mark($thread, true);
     }
 
     /**
@@ -68,27 +65,22 @@ class Deleter implements DeleterInterface
      */
     public function markAsUndeleted(ThreadInterface $thread): void
     {
-        $this->mark($thread, false, FOSMessageEvents::POST_UNDELETE);
+        $this->mark($thread, false);
     }
 
     /**
      * @param ThreadInterface $thread
      * @param bool $isDeleted
-     * @param string $eventName
      *
      * @return void
      */
-    private function mark(ThreadInterface $thread, bool $isDeleted, string $eventName): void
+    private function mark(ThreadInterface $thread, bool $isDeleted): void
     {
-        if (!$this->authorizer->canDeleteThread($thread)) {
-            throw new AccessDeniedException('You are not allowed to delete this thread');
-        }
+        $p = $this->participantProvider->getAuthenticatedParticipant();
 
         $thread->setIsDeletedByParticipant(
-            $this->participantProvider->getAuthenticatedParticipant(),
+            $p,
             $isDeleted
         );
-
-        $this->dispatcher->dispatch(new ThreadEvent($thread), $eventName);
     }
 }

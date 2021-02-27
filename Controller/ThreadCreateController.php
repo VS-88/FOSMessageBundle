@@ -3,9 +3,11 @@ declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Controller;
 
+use FOS\MessageBundle\Exceptions\SubmittedMessageValidationException;
 use FOS\MessageBundle\FormFactory\AbstractMessageFormFactory;
 use FOS\MessageBundle\FormHandler\AbstractMessageFormHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -56,11 +58,25 @@ class ThreadCreateController extends AbstractController
     {
         $form = $this->newMessageFormFactory->create();
 
-        if ($message = $this->newFormHandler->process($form, $request)) {
-            $resp =  $this->redirectToRoute('fos_message_thread_view', [
-                'threadId' => $message->getThread()->getId(),
-            ]);
-        } else {
+        try {
+            if ($message = $this->newFormHandler->process($form, $request)) {
+                $this->addFlash('success', 'Message was successfully created!');
+
+                $resp =  $this->redirectToRoute('fos_message_thread_new');
+            } else {
+                $resp = $this->render($this->templatePath, [
+                    'form' => $form->createView(),
+                    'data' => $form->getData(),
+                ]);
+            }
+        } catch (SubmittedMessageValidationException $exception) {
+            /**
+             * @var FormError $error
+             */
+            foreach ($exception->getFormErrors() as $error) {
+                $this->addFlash('error', $error->getMessage());
+            }
+
             $resp = $this->render($this->templatePath, [
                 'form' => $form->createView(),
                 'data' => $form->getData(),

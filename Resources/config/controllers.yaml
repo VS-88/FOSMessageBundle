@@ -1,20 +1,27 @@
+parameters:
+  fos_message.pagination_limit: 10
+
 services:
   _defaults:
     autowire: true
     autoconfigure: true
-    
-  FOS\MessageBundle\Controller\InboxController:
-    class: FOS\MessageBundle\Controller\InboxController
-    arguments:
-      - '@fos_message.provider.default'
-      - '%template_paths.inbox%'
 
-  FOS\MessageBundle\Controller\SentController:
-    class: FOS\MessageBundle\Controller\SentController
+  FOS\MessageBundle\Repository\:
+    resource: '../../Repository'
+    
+  fos_message.inbox.controller:
+    class: FOS\MessageBundle\Controller\UserMessagesListAwareController
     arguments:
-      - '@fos_message.provider.default'
+      - '%template_paths.inbox%'
+      - '%fos_message.pagination_limit%'
+      - ['@fos_message.messages_inbox_provider.provider', 'getMessagesByParticipantOrderByDateAndIsReadStatus']
+
+  fos_message.sent.controller:
+    class: FOS\MessageBundle\Controller\UserMessagesListAwareController
+    arguments:
       - '%template_paths.sent%'
-    public: true
+      - '%fos_message.pagination_limit%'
+      - ['@fos_message.messages_sent_provider.provider', 'getSentMessagesByParticipantOrderByDate']
 
   FOS\MessageBundle\Controller\ThreadCreateController:
     class: FOS\MessageBundle\Controller\ThreadCreateController
@@ -26,7 +33,6 @@ services:
   FOS\MessageBundle\Controller\ThreadDeleteController:
     class: FOS\MessageBundle\Controller\ThreadDeleteController
     arguments:
-      - '@fos_message.provider.default'
       - '@fos_message.deleter.default'
       - '@fos_message.thread_manager.default'
 
@@ -42,13 +48,6 @@ services:
       - '@fos_message.search_query_factory.default'
       - '@fos_message.search_finder.default'
       - '%template_paths.search%'
-
-  FOS\MessageBundle\Controller\ThreadUndeleteController:
-    class: FOS\MessageBundle\Controller\ThreadUndeleteController
-    arguments:
-      - '@fos_message.provider.default'
-      - '@fos_message.deleter.default'
-      - '@fos_message.thread_manager.default'
 
   FOS\MessageBundle\Controller\ThreadViewController:
     class: FOS\MessageBundle\Controller\ThreadViewController
@@ -68,3 +67,26 @@ services:
     arguments:
       - '%fos_message.message_class%'
       - '%template_paths.moderate_message%'
+
+  FOS\MessageBundle\Controller\ModerateMessageListController:
+    arguments:
+      - '%template_paths.moderate_message_list%'
+      - 'moderate_messages_list'
+      - 50
+      - '@fos_message.moderate_message_list.provider'
+
+  fos_message.moderate_message_list.provider:
+    class: FOS\MessageBundle\Repository\MessageRepository
+    arguments:
+      - '@doctrine'
+
+  fos_message.messages_inbox_provider.provider:
+    class: FOS\MessageBundle\Repository\MessageRepository
+    arguments:
+      - '@doctrine'
+
+  fos_message.messages_sent_provider.provider:
+    class: FOS\MessageBundle\Repository\MessageRepository
+    arguments:
+      - '@doctrine'
+

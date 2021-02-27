@@ -3,148 +3,82 @@ declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Tests\Controller;
 
-use FOS\MessageBundle\Controller\ThreadCreateController;
-use FOS\MessageBundle\FormFactory\AbstractMessageFormFactory;
-use FOS\MessageBundle\FormHandler\AbstractMessageFormHandler;
-use FOS\MessageBundle\Model\MessageInterface;
-use FOS\MessageBundle\Model\ThreadInterface;
-use FOS\MessageBundle\Tests\AbstractTestCase;
-use FOS\MessageBundle\Tests\PartialMockAwareTrait;
-use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
+use FOS\MessageBundle\DataFixtures\Participant\ParticipantFixture;
+use FOS\MessageBundle\Entity\Message;
+use FOS\MessageBundle\Tests\AbstractDataBaseTestCase;
 
 /**
  * Class ThreadCreateController
  */
-class ThreadCreateControllerTest extends AbstractTestCase
+class ThreadCreateControllerTest extends AbstractDataBaseTestCase
 {
-    use PartialMockAwareTrait;
-
-    private const PATH_TO_TEMPLATE = '/path/to/template';
-
-    /**
-     * @var ThreadCreateController|MockInterface
-     */
-    private $controller;
-
-    /**
-     * @var AbstractMessageFormFactory
-     */
-    private $newMessageFormFactory;
-
-    /**
-     * @var AbstractMessageFormHandler
-     */
-    private $newFormHandler;
-
+    public const FIXTURES = [
+        ParticipantFixture::class,
+    ];
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->newMessageFormFactory = \Mockery::mock(AbstractMessageFormFactory::class);
-        $this->newFormHandler        = \Mockery::mock(AbstractMessageFormHandler::class);
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+    }
 
-        $this->controller = $this->getClassPartialMock(
-            ThreadCreateController::class,
-            [
-                self::PATH_TO_TEMPLATE,
-                $this->newMessageFormFactory,
-                $this->newFormHandler
-            ],
-            [
-                'render',
-                'redirectToRoute'
-            ]
+    /**
+     * @test
+     */
+    public function getRequestIndexAction(): void
+    {
+        $this->kernelBrowser->request('GET', '/new');
+
+        $response = $this->kernelBrowser->getResponse();
+
+        static::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function createThread(): void
+    {
+        $this->kernelBrowser->disableReboot();
+
+        $uri = '/new';
+
+        $this->kernelBrowser->request('GET', $uri);
+
+        $form = $this->kernelBrowser->getCrawler()->filter('button')->form();
+
+        $values = $form->getPhpValues();
+
+        $values['message']['subject']   = 'test subject';
+        $values['message']['body']      = 'test body';
+        $values['message']['recipient'] = ParticipantFixture::PARTICIPANT_EMAIL_1;
+
+
+        $this->kernelBrowser->request(
+            'POST',
+            $uri,
+            $values
+        );
+
+        $messages = $this->em->getRepository(Message::class)->findAll();
+
+        self::assertCount(
+            1,
+            $messages
+        );
+
+        self::assertSame(
+            'test body',
+            $messages[0]->getBody()
         );
     }
 
     /**
-     * @test
+     * @return array
      */
-    public function indexActionPostCase(): void
+    protected function getFixtures(): array
     {
-        $form = \Mockery::mock(FormInterface::class);
-        $request = \Mockery::mock(Request::class);
-
-        $this->newMessageFormFactory->shouldReceive('create')
-            ->once()
-            ->withNoArgs()
-            ->andReturn($form);
-
-        $message = \Mockery::mock(MessageInterface::class);
-
-        $thread = \Mockery::mock(ThreadInterface::class);
-        $thread->shouldReceive('getId')->once()->andReturn(1);
-
-        $message->shouldReceive('getThread')->once()->andReturn($thread);
-
-        $this->newFormHandler->shouldReceive('process')
-            ->once()
-            ->with($form, $request)
-            ->andReturn($message);
-
-        $response = \Mockery::mock(RedirectResponse::class);
-
-        $this->controller->shouldReceive('redirectToRoute')
-            ->once()
-            ->with(
-                'fos_message_thread_view',
-                [
-                    'threadId' => 1,
-
-                ]
-            )
-            ->andReturn($response);
-
-        $actual = $this->controller->indexAction($request);
-
-        self::assertSame($response, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function indexActionNotPostCase(): void
-    {
-        $form = \Mockery::mock(FormInterface::class);
-        $request = \Mockery::mock(Request::class);
-
-        $viewModel = \Mockery::mock(FormView::class);
-        $data = ['some data'];
-
-        $form->shouldReceive('createView')->once()->andReturn($viewModel);
-        $form->shouldReceive('getData')->once()->andReturn($data);
-
-        $this->newMessageFormFactory->shouldReceive('create')
-            ->once()
-            ->withNoArgs()
-            ->andReturn($form);
-
-        $this->newFormHandler->shouldReceive('process')
-            ->once()
-            ->with($form, $request)
-            ->andReturnNull();
-
-        $response = \Mockery::mock(RedirectResponse::class);
-
-        $this->controller->shouldReceive('render')
-            ->once()
-            ->with(
-                self::PATH_TO_TEMPLATE,
-                [
-                    'form' => $viewModel,
-                    'data' => $data,
-                ]
-            )
-            ->andReturn($response);
-
-        $actual = $this->controller->indexAction($request);
-
-        self::assertSame($response, $actual);
+        return self::FIXTURES;
     }
 }

@@ -11,7 +11,6 @@ use FOS\MessageBundle\Reader\ReaderInterface;
 use FOS\MessageBundle\Security\AuthorizerInterface;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Provides threads for the current authenticated user.
@@ -108,17 +107,19 @@ class Provider implements ProviderInterface
     }
 
     /**
+     * NOTICE: Inside $em->clear() is called.
+     * If you want persist it, for example, use $em->refresh(...) method before
+     *
      * {@inheritdoc}
      */
-    public function getThread($threadId): ?ThreadInterface
+    public function getThreadAndMarkAsRead($threadId): ?ThreadInterface
     {
         $thread = $this->threadManager->findThreadById($threadId);
+
         if (!$thread) {
             throw new NotFoundHttpException('There is no such thread');
         }
-        if (!$this->authorizer->canSeeThread($thread)) {
-            throw new AccessDeniedException('You are not allowed to see this thread');
-        }
+
         // Load the thread messages before marking them as read
         // because we want to see the unread messages
         $thread->getMessages();
@@ -143,5 +144,10 @@ class Provider implements ProviderInterface
     protected function getAuthenticatedParticipant(): ParticipantInterface
     {
         return $this->participantProvider->getAuthenticatedParticipant();
+    }
+
+    public function findThreadById(int $id): ThreadInterface
+    {
+        return $this->threadManager->findThreadById($id);
     }
 }

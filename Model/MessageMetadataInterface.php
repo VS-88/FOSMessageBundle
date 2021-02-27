@@ -31,4 +31,21 @@ interface MessageMetadataInterface
      * @return MessageMetadata
      */
     public function setIsRead(bool $isRead): MessageMetadata;
+
+    /**
+     * @return int|string
+     */
+    public function getId();
+
+    /**
+     * @return MessageInterface
+     */
+    public function getMessage(): MessageInterface;
+
+    /**
+     * @param MessageInterface $message
+     *
+     * @return MessageMetadataInterface
+     */
+    public function setMessage(MessageInterface $message): MessageMetadataInterface;
 }

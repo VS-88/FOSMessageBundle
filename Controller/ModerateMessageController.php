@@ -29,6 +29,9 @@ class ModerateMessageController extends AbstractController
      */
     private $templatePath;
 
+    /**
+     * @var EventDispatcherInterface
+     */
     private $eventDispatcher;
 
     /**
@@ -51,14 +54,15 @@ class ModerateMessageController extends AbstractController
      * @param EntityManagerInterface $entityManager
      * @param Request $request
      *
+     * @param int $messageId
      * @return Response
+     * @throws Exception
      */
     public function indexAction(
         EntityManagerInterface $entityManager,
-        Request $request
+        Request $request,
+        int $messageId
     ): Response {
-        $messageId = $request->get('id');
-
         /**
          * @var MessageInterface $message
          */
@@ -79,22 +83,23 @@ class ModerateMessageController extends AbstractController
                     $data = $form->getData();
 
                     $entityManager->beginTransaction();
+                    $message->setIsModerated((bool) $data[ModerateMessageFormType::FORM_CHILD_IS_APPROVED]);
 
                     try {
-                        $message->setIsModerated((bool) $data[ModerateMessageFormType::FORM_CHILD_IS_APPROVED]);
                         $entityManager->persist($message);
 
                         $entityManager->flush();
+
                         $entityManager->commit();
-
-                        $this->addFlash('success', 'Message was successfully updated!');
-
-                        $this->eventDispatcher->dispatch(new ModeratedMessageEvent($message));
                     } catch (Exception $e) {
                         $entityManager->rollback();
 
                         throw $e;
                     }
+
+                    $this->addFlash('success', 'Message was successfully updated!');
+
+                    $this->eventDispatcher->dispatch(new ModeratedMessageEvent($message));
                 } else {
                     /**
                      * @var FormError $error

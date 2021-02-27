@@ -88,4 +88,36 @@ interface MessageInterface extends ReadableInterface
      * @return self
      */
     public function setIsModerated(bool $isModerated): self;
+
+    /**
+     * Get the collection of MessageMetadata.
+     *
+     * @return Collection|\FOS\MessageBundle\Entity\MessageMetadata[]
+     */
+    public function getAllMetadata(): Collection;
+
+    /**
+     * @param MessageMetadataInterface $meta
+     * @return MessageInterface
+     */
+    public function addMetadata(MessageMetadataInterface $meta): MessageInterface;
+
+    /**
+     * Get the MessageMetadata for a participant.
+     *
+     * @param ParticipantInterface $participant
+     *
+     * @return MessageMetadata
+     */
+    public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadataInterface;
+
+    /**
+     * @return iterable
+     */
+    public function getDestinationParticipants(): iterable;
+
+    /**
+     * @return string
+     */
+    public function getDestinationParticipantsAsStr(string $separator = ','): string;
 }

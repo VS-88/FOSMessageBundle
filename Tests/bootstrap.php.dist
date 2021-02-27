@@ -1,0 +1,63 @@
+<?php
+declare(strict_types = 1);
+
+use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Tests\Functional\Entity\DummyParticipant;
+use Symfony\Component\Filesystem\Filesystem;
+
+defined('ROOT_PATH') || define('ROOT_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+
+date_default_timezone_set('America/Chicago');
+
+require_once ROOT_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+$fs = new Filesystem();
+$fs->remove(__DIR__ . '/../var/cache');
+
+ob_start();
+
+error_reporting(-1);
+
+$conf = [
+    'dbal' => [
+        'server_version' => '8.0',
+        'charset' => 'utf8mb4',
+        'default_table_options' => [
+            'charset' => 'utf8mb4',
+            'collate' => 'utf8mb4_unicode_ci',
+            'engine'  => 'InnoDB'
+        ],
+        'host' => 'localhost',
+        'user' => 'root',
+        'dbname' => 'fos_message_test',
+        'port' => '3308',
+        'password' => '',
+        'options' => ['x_reconnect_attempts' => 10],
+    ],
+    'orm' => [
+        'auto_generate_proxy_classes' => false,
+        'resolve_target_entities' => [
+            ParticipantInterface::class => DummyParticipant::class,
+        ],
+        'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
+        'auto_mapping' => 'true',
+        'mappings' => [
+            'App' => [
+                'is_bundle' => false,
+                'type' => 'annotation',
+                'dir' => '%kernel.project_dir%/Entity',
+                'prefix' => 'FOS\MessageBundle\Entity',
+                'alias' => 'FOSMessageBundleEntity'
+            ],
+            'Tests' => [
+                'is_bundle' => false,
+                'type' => 'annotation',
+                'dir' => '%kernel.project_dir%/Tests/Functional/Entity',
+                'prefix' => 'FOS\MessageBundle\Tests\Functional\Entity',
+                'alias' => 'FOSMessageBundleEntityTest'
+            ],
+        ],
+    ],
+];
+
+$_ENV['doctrine_config_as_json'] = json_encode($conf);

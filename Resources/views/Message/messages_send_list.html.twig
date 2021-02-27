@@ -1,0 +1,43 @@
+<table>
+
+    <thead>
+        <tr>
+            <th>{% trans from 'FOSMessageBundle' %}subject{% endtrans %}</th>
+            <th>{% trans from 'FOSMessageBundle' %}body{% endtrans %}</th>
+            <th>{% trans from 'FOSMessageBundle' %}createdAt{% endtrans %}</th>
+            <th>{% trans from 'FOSMessageBundle' %}participants{% endtrans %}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% if list %}
+        {% for message in list %}
+            <tr>
+                <td>
+                    <a href="{{ url('fos_message_thread_view', {'threadId': message.thread.id}) }}">
+                        {{ message.thread.subject }}
+                    </a>
+                </td>
+                <td>
+                    {{ message.body }}
+                </td>
+                <td>
+                    {{ message.createdAt|date }}
+                </td>
+                <td>
+                    {{ message.destinationParticipantsAsStr }}
+                </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="6">
+                {% trans from 'FOSMessageBundle' %}no_thread{% endtrans %}.
+            </td>
+        </tr>
+    {% endif %}
+
+    </tbody>
+
+</table>

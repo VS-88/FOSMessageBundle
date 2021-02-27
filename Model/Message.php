@@ -7,6 +7,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use InvalidArgumentException;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 /**
  * Abstract message model.
@@ -65,7 +66,7 @@ abstract class Message implements MessageInterface
     /**
      * @var int
      */
-    private $isModerated;
+    protected $isModerated;
 
     /**
      * Constructor.
@@ -158,19 +159,6 @@ abstract class Message implements MessageInterface
     }
 
     /**
-     * Adds MessageMetadata to the metadata collection.
-     *
-     * @param MessageMetadataInterface $meta
-     * @return MessageInterface
-     */
-    public function addMetadata(MessageMetadataInterface $meta): MessageInterface
-    {
-        $this->metadata->add($meta);
-
-        return $this;
-    }
-
-    /**
      * @param MessageAttachmentInterface $messageAttachment
      * @return MessageInterface
      */
@@ -218,7 +206,7 @@ abstract class Message implements MessageInterface
      *
      * @return MessageMetadata
      */
-    public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadata
+    public function getMetadataForParticipant(ParticipantInterface $participant): ?MessageMetadataInterface
     {
         foreach ($this->metadata as $meta) {
             if ($meta->getParticipant()->getId() === $participant->getId()) {
@@ -273,5 +261,50 @@ abstract class Message implements MessageInterface
         $this->isModerated = (int) $isModerated;
 
         return $this;
+    }
+
+    /**
+     * Get the collection of MessageMetadata.
+     *
+     * @return Collection|MessageMetadataInterface[]
+     */
+    public function getAllMetadata(): Collection
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addMetadata(MessageMetadataInterface $meta): MessageInterface
+    {
+        $meta->setMessage($this);
+        $this->metadata->add($meta);
+
+        return $this;
+    }
+
+    /**
+     * @return iterable
+     */
+    public function getDestinationParticipants(): iterable
+    {
+        foreach ($this->getAllMetadata() as $metadata) {
+            $participant = $metadata->getParticipant();
+
+            if ($participant->getId() !== $this->getSender()->getId()) {
+                yield $participant;
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getDestinationParticipantsAsStr(string $separator = ','): string
+    {
+        $result = iterator_to_array($this->getDestinationParticipants());
+
+        return implode($separator, $result);
     }
 }

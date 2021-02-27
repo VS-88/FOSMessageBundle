@@ -47,20 +47,20 @@ class ModerateMessageListController extends AbstractController
      * @param string $actionsTemplatePath
      * @param string $listContainerId
      * @param int $limit
-     * @param ModerationAwareMessageProviderInterface $listProvider
+     * @param ModerationAwareMessageProviderInterface $moderateMessagesListProvider
      */
     public function __construct(
-        PaginatorInterface $paginator,
         string $actionsTemplatePath,
         string $listContainerId,
         int $limit,
-        ModerationAwareMessageProviderInterface $listProvider
+        ModerationAwareMessageProviderInterface $moderateMessagesListProvider,
+        PaginatorInterface $paginator
     ) {
         $this->paginator           = $paginator;
         $this->templatePath = $actionsTemplatePath;
         $this->listContainerId     = $listContainerId;
         $this->limit               = $limit;
-        $this->listProvider        = $listProvider;
+        $this->listProvider        = $moderateMessagesListProvider;
     }
 
     /**
@@ -70,7 +70,7 @@ class ModerateMessageListController extends AbstractController
      *
      * @throws LogicException
      */
-    public function index(Request $request): Response
+    public function indexAction(Request $request): Response
     {
         $query = $this->listProvider->getMessagesByModerationFlag(false);
 

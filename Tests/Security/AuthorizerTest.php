@@ -8,6 +8,7 @@ use FOS\MessageBundle\Model\ThreadInterface;
 use FOS\MessageBundle\Security\Authorizer;
 use FOS\MessageBundle\Security\ParticipantProviderInterface;
 use FOS\MessageBundle\Tests\AbstractTestCase;
+use Mockery;
 
 /**
  * Manages permissions to manipulate threads and messages.
@@ -33,7 +34,7 @@ class AuthorizerTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->participantProvider = \Mockery::mock(ParticipantProviderInterface::class);
+        $this->participantProvider = Mockery::mock(ParticipantProviderInterface::class);
 
         $this->service = new Authorizer($this->participantProvider);
     }
@@ -41,28 +42,9 @@ class AuthorizerTest extends AbstractTestCase
     /**
      * @test
      */
-    public function canSeeThread(): void
-    {
-        $thread      = \Mockery::mock(ThreadInterface::class);
-        $participant = \Mockery::mock(ParticipantInterface::class);
-
-        $this->participantProvider->shouldReceive('getAuthenticatedParticipant')
-            ->twice()
-            ->withNoArgs()
-            ->andReturn($participant);
-
-        $thread->shouldReceive('isParticipant')->twice()->with($participant)->andReturnTrue();
-
-        self::assertTrue($this->service->canSeeThread($thread));
-        self::assertTrue($this->service->canDeleteThread($thread));
-    }
-
-    /**
-     * @test
-     */
     public function canMessageParticipant(): void
     {
-        $participant = \Mockery::mock(ParticipantInterface::class);
+        $participant = Mockery::mock(ParticipantInterface::class);
 
         self::assertTrue($this->service->canMessageParticipant($participant));
     }

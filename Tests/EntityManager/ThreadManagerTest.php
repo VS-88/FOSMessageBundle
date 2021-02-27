@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use FOS\MessageBundle\EntityManager\ThreadManager;
+use FOS\MessageBundle\Model\AbstractThreadMetadata;
 use FOS\MessageBundle\Model\MessageInterface;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ReadableInterface;
@@ -410,17 +411,17 @@ class ThreadManagerTest extends AbstractTestCase
 
         $thread->shouldReceive('getMetadataForParticipant')->once()->with($participant1)->andReturnNull();
 
-        $metaForParticipant1 = Mockery::mock(ThreadMetadataInterface::class);
+        $metaForParticipant1 = Mockery::mock(AbstractThreadMetadata::class);
         $metaForParticipant1->shouldReceive('setParticipant')->once()->with($participant1);
 
-        $metaForParticipant2 = Mockery::mock(ThreadMetadataInterface::class);
+        $metaForParticipant2 = Mockery::mock(AbstractThreadMetadata::class);
 
 
         $this->threadMetadataFactory->shouldReceive('create')->once()->andReturn($metaForParticipant1);
 
         $thread->shouldReceive('addMetadata')->once()->with($metaForParticipant1);
 
-        $metaForSender1 = Mockery::mock(ThreadMetadataInterface::class);
+        $metaForSender1 = Mockery::mock(AbstractThreadMetadata::class);
         $metaForSender1->shouldReceive('setParticipant')->once()->with($sender1);
 
         $thread->shouldReceive('getMetadataForParticipant')

@@ -1,37 +1,29 @@
 <?php
+declare(strict_types = 1);
 
 namespace FOS\MessageBundle\Tests\Functional\Entity;
 
-use FOS\MessageBundle\Model\ParticipantInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User implements ParticipantInterface, UserInterface
+/**
+ * Class User
+ * @package FOS\MessageBundle\Tests\Functional\Entity
+ */
+class User extends DummyParticipant
 {
-    public function getUsername()
+    /**
+     * @return string
+     */
+    public function getUsername(): string
     {
         return 'guilhem';
     }
 
-    public function getPassword()
+    /**
+     * @return string|null
+     */
+    public function getPassword(): ?string
     {
         return 'pass';
-    }
-
-    public function getSalt()
-    {
-    }
-
-    public function getRoles()
-    {
-        return array();
-    }
-
-    public function eraseCredentials()
-    {
-    }
-
-    public function getId()
-    {
-        return 1;
     }
 }

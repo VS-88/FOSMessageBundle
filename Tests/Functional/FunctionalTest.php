@@ -3,14 +3,32 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\Tests\Functional;
 
+use FOS\MessageBundle\DataFixtures\Message\MessageFixture;
+use FOS\MessageBundle\DataFixtures\MessageMetadata\MessageMetadataFixture;
+use FOS\MessageBundle\DataFixtures\Participant\ParticipantFixture;
+use FOS\MessageBundle\DataFixtures\Thread\ThreadFixture;
+use FOS\MessageBundle\DataFixtures\ThreadMetadata\ThreadMetadataFixture;
+use FOS\MessageBundle\Entity\Message;
+use FOS\MessageBundle\Tests\AbstractDataBaseTestCase;
+
 /**
  * Class FunctionalTest
  */
-class FunctionalTest extends WebTestCase
+class FunctionalTest extends AbstractDataBaseTestCase
 {
+    public const FIXTURES = [
+        ParticipantFixture::class,
+        ThreadFixture::class,
+        MessageFixture::class,
+        ThreadMetadataFixture::class,
+        MessageMetadataFixture::class,
+    ];
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
     }
 
     /**
@@ -18,15 +36,13 @@ class FunctionalTest extends WebTestCase
      */
     public function controllerSent(): void
     {
-        $client = self::createClient([], [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ]);
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_1, '', []);
 
-        $client->request('GET', '/sent');
+        $this->kernelBrowser->request('GET', '/sent');
 
-        $response = $client->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+        $response = $this->kernelBrowser->getResponse();
+
+        static::assertSame(200, $response->getStatusCode());
     }
 
     /**
@@ -34,15 +50,27 @@ class FunctionalTest extends WebTestCase
      */
     public function controllerInbox(): void
     {
-        $client = self::createClient([], [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ]);
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
 
-        $client->request('GET', '/inbox');
+        /**
+         * @var Message[] $messages
+         */
+        $messages = $this->em->getRepository(Message::class)->findAll();
 
-        $response = $client->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+        $message = reset($messages);
+
+        $message->setIsModerated(true);
+
+
+        $this->em->persist($message);
+        $this->em->flush();
+        $this->em->clear();
+
+        $this->kernelBrowser->request('GET', '/inbox');
+
+        $response = $this->kernelBrowser->getResponse();
+
+        static::assertSame(200, $response->getStatusCode());
     }
 
     /**
@@ -50,14 +78,38 @@ class FunctionalTest extends WebTestCase
      */
     public function controllerDeleted(): void
     {
-        $client = self::createClient([], [
-            'PHP_AUTH_USER' => 'guilhem',
-            'PHP_AUTH_PW' => 'pass',
-        ]);
 
-        $client->request('GET', '/deleted');
+        $this->kernelBrowser->request('GET', '/deleted');
 
-        $response = $client->getResponse();
-        static::assertEquals(200, $response->getStatusCode());
+        $response = $this->kernelBrowser->getResponse();
+        static::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function controllerModeratedList(): void
+    {
+
+        $this->kernelBrowser->request('GET', '/message/moderate');
+
+        $response = $this->kernelBrowser->getResponse();
+        static::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getFixtures(): array
+    {
+        return self::FIXTURES;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getClientServerParams(): array
+    {
+        return [];
     }
 }
