@@ -26,7 +26,7 @@ class ModerateMessageFormType extends AbstractType
                 self::FORM_CHILD_DECLINE,
                 SubmitType::class,
                 [
-                    'label' => 'Decline',
+                    'label' => 'decline',
                     'translation_domain' => 'FOSMessageBundle',
                 ]
             )
@@ -34,7 +34,7 @@ class ModerateMessageFormType extends AbstractType
                 self::FORM_CHILD_APPROVE,
                 SubmitType::class,
                 [
-                    'label' => 'Approve',
+                    'label' => 'approve',
                     'translation_domain' => 'FOSMessageBundle',
                 ]
             );
