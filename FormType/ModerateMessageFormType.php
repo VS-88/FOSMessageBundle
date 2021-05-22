@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormType;
 
-use FOS\MessageBundle\Traits\TranslatorAwareTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,8 +12,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class ModerateMessageFormType extends AbstractType
 {
-    use TranslatorAwareTrait;
-
     public const FORM_CHILD_DECLINE     = 'Decline';
     public const FORM_CHILD_APPROVE     = 'Approve';
 
@@ -29,7 +26,7 @@ class ModerateMessageFormType extends AbstractType
                 self::FORM_CHILD_DECLINE,
                 SubmitType::class,
                 [
-                    'label' => 'decline',
+                    'label' => 'Decline',
                     'translation_domain' => 'FOSMessageBundle',
                 ]
             )
@@ -37,7 +34,7 @@ class ModerateMessageFormType extends AbstractType
                 self::FORM_CHILD_APPROVE,
                 SubmitType::class,
                 [
-                    'label' => $this->translate('approve'),
+                    'label' => 'Approve',
                     'translation_domain' => 'FOSMessageBundle',
                 ]
             );
