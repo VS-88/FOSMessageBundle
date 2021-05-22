@@ -72,7 +72,7 @@ services:
     arguments:
       - '%template_paths.moderate_message_list%'
       - 'moderate_messages_list'
-      - 50
+      - '%fos_message.pagination_limit%'
       - '@fos_message.moderate_message_list.provider'
 
   fos_message.moderate_message_list.provider:
