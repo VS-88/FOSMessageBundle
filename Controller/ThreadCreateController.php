@@ -6,6 +6,7 @@ namespace FOS\MessageBundle\Controller;
 use FOS\MessageBundle\Exceptions\SubmittedMessageValidationException;
 use FOS\MessageBundle\FormFactory\AbstractMessageFormFactory;
 use FOS\MessageBundle\FormHandler\AbstractMessageFormHandler;
+use FOS\MessageBundle\Traits\TranslatorAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ThreadCreateController extends AbstractController
 {
+    use TranslatorAwareTrait;
+
     /**
      * @var AbstractMessageFormFactory
      */
@@ -60,7 +63,7 @@ class ThreadCreateController extends AbstractController
 
         try {
             if ($message = $this->newFormHandler->process($form, $request)) {
-                $this->addFlash('success', 'Message was successfully created!');
+                $this->addFlash('success', $this->translate('Message was successfully created!'));
 
                 $resp =  $this->redirectToRoute('fos_message_thread_new');
             } else {

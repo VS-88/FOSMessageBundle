@@ -44,6 +44,7 @@ class RecipientType extends AbstractType
     {
         $resolver->setDefaults([
             'invalid_message' => 'The selected recipient does not exist',
+            'translation_domain' => 'FOSMessageBundle',
         ]);
     }
 

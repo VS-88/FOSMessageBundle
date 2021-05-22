@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace FOS\MessageBundle\FormType;
 
+use FOS\MessageBundle\Traits\TranslatorAwareTrait;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -13,7 +13,10 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class ModerateMessageFormType extends AbstractType
 {
-    public const FORM_CHILD_IS_APPROVED = 'isApproved';
+    use TranslatorAwareTrait;
+
+    public const FORM_CHILD_DECLINE     = 'Decline';
+    public const FORM_CHILD_APPROVE     = 'Approve';
 
     /**
      * @param FormBuilderInterface $builder
@@ -23,10 +26,20 @@ class ModerateMessageFormType extends AbstractType
     {
         $builder
             ->add(
-                self::FORM_CHILD_IS_APPROVED,
-                CheckboxType::class,
-                ['label' => 'Approve (Yes/No)', 'required' => false]
+                self::FORM_CHILD_DECLINE,
+                SubmitType::class,
+                [
+                    'label' => 'decline',
+                    'translation_domain' => 'FOSMessageBundle',
+                ]
             )
-            ->add('Save', SubmitType::class, ['label' => 'Сохранить',]);
+            ->add(
+                self::FORM_CHILD_APPROVE,
+                SubmitType::class,
+                [
+                    'label' => $this->translate('approve'),
+                    'translation_domain' => 'FOSMessageBundle',
+                ]
+            );
     }
 }

@@ -7,6 +7,7 @@ use FOS\MessageBundle\Exceptions\SubmittedMessageValidationException;
 use FOS\MessageBundle\FormFactory\AbstractMessageFormFactory;
 use FOS\MessageBundle\FormHandler\AbstractMessageFormHandler;
 use FOS\MessageBundle\Provider\ProviderInterface;
+use FOS\MessageBundle\Traits\TranslatorAwareTrait;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ThreadViewController extends AbstractProviderAwareController
 {
+    use TranslatorAwareTrait;
+
     /**
      * @var AbstractMessageFormFactory
      */
@@ -80,7 +83,7 @@ class ThreadViewController extends AbstractProviderAwareController
 
         try {
             if ($message = $this->replyFormHandler->process($form, $request)) {
-                $this->addFlash('success', 'Message was successfully created!');
+                $this->addFlash('success', $this->translate('Message was successfully created!'));
 
                 $resp =  $this->redirectToRoute('fos_message_thread_view', [
                     'threadId' => $message->getThread()->getId(),

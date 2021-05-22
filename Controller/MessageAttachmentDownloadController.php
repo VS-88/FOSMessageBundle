@@ -69,7 +69,7 @@ class MessageAttachmentDownloadController extends AbstractController
 
         if ($messageAttachment !== null) {
             if ($this->authorizationChecker->isGranted('VIEW', $messageAttachment) === false) {
-                throw $this->createAccessDeniedException('Доступен запрещен!');
+                throw $this->createAccessDeniedException();
             }
 
             $filepath = realpath(

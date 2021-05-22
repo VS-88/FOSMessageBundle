@@ -50,7 +50,7 @@ abstract class AbstractAttachmentAwareFormType extends AbstractType
                 self::FORM_CHILD_SAVE,
                 SubmitType::class,
                 [
-                    'label' => 'Save',
+                    'label' => 'Send',
                     'translation_domain' => 'FOSMessageBundle',
                 ]
             );

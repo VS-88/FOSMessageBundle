@@ -8,6 +8,7 @@ use Exception;
 use FOS\MessageBundle\Event\ModeratedMessageEvent;
 use FOS\MessageBundle\FormType\ModerateMessageFormType;
 use FOS\MessageBundle\Model\MessageInterface;
+use FOS\MessageBundle\Traits\TranslatorAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
@@ -19,6 +20,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ModerateMessageController extends AbstractController
 {
+    use TranslatorAwareTrait;
+
     /**
      * @var string
      */
@@ -70,20 +73,20 @@ class ModerateMessageController extends AbstractController
 
         if ($message !== null) {
             $form = $this->createForm(
-                ModerateMessageFormType::class,
-                [
-                    ModerateMessageFormType::FORM_CHILD_IS_APPROVED => $message->getIsModerated()
-                ]
+                ModerateMessageFormType::class
             );
 
             $form->handleRequest($request);
 
             if ($form->isSubmitted()) {
                 if ($form->isValid()) {
-                    $data = $form->getData();
-
                     $entityManager->beginTransaction();
-                    $message->setIsModerated((bool) $data[ModerateMessageFormType::FORM_CHILD_IS_APPROVED]);
+
+                    $isApproved = $form->get(ModerateMessageFormType::FORM_CHILD_APPROVE)->isClicked()
+                        ? true
+                        : false;
+
+                    $message->setIsModerated($isApproved);
 
                     try {
                         $entityManager->persist($message);
@@ -97,10 +100,14 @@ class ModerateMessageController extends AbstractController
                         throw $e;
                     }
 
-                    $this->addFlash('success', 'Message was successfully updated!');
+                    $this->addFlash(
+                        'success',
+                        $this->translate('Message was successfully updated!', [], 'FOSMessageBundle')
+                    );
 
                     $this->eventDispatcher->dispatch(new ModeratedMessageEvent($message));
                 } else {
+
                     /**
                      * @var FormError $error
                      */

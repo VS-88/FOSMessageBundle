@@ -11,6 +11,7 @@ use FOS\MessageBundle\DataFixtures\Thread\ThreadFixture;
 use FOS\MessageBundle\DataFixtures\ThreadMetadata\ThreadMetadataFixture;
 use FOS\MessageBundle\Entity\Message;
 use FOS\MessageBundle\Entity\MessageAttachment;
+use FOS\MessageBundle\FormType\ModerateMessageFormType;
 use FOS\MessageBundle\Tests\AbstractDataBaseTestCase;
 
 /**
@@ -80,11 +81,11 @@ class ModerateMessageFunctionalTest extends AbstractDataBaseTestCase
 
         $this->kernelBrowser->request('GET', $uri);
 
-        $form = $this->kernelBrowser->getCrawler()->filter('button')->form();
+        $form = $this->kernelBrowser->getCrawler()->filter('button[name="moderate_message_form[Approve]"]')->form();
 
         $values = $form->getPhpValues();
 
-        $values['moderate_message_form']['isApproved'] = true;
+        $values['moderate_message_form'][ModerateMessageFormType::FORM_CHILD_APPROVE] = '';
 
         $this->kernelBrowser->request(
             'POST',
@@ -97,6 +98,47 @@ class ModerateMessageFunctionalTest extends AbstractDataBaseTestCase
         );
 
         self::assertTrue(
+            $entity->getIsModerated()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function updateIsModeratedFlagFalseSuccess(): void
+    {
+        $this->logIn(ParticipantFixture::PARTICIPANT_EMAIL_2, '', []);
+
+        $repo = $this->em->getRepository(Message::class);
+
+        $this->kernelBrowser->disableReboot();
+
+        /**
+         * @var Message $entity
+         */
+        $entity = $repo->findOneBy(['isModerated' => false]);
+
+        $uri = '/message/moderate/' . $entity->getId();
+
+        $this->kernelBrowser->request('GET', $uri);
+
+        $form = $this->kernelBrowser->getCrawler()->filter('button[name="moderate_message_form[Decline]"]')->form();
+
+        $values = $form->getPhpValues();
+
+        $values['moderate_message_form'][ModerateMessageFormType::FORM_CHILD_DECLINE] = '';
+
+        $this->kernelBrowser->request(
+            'POST',
+            $uri,
+            $values
+        );
+
+        $entity = $repo->find(
+            $entity->getId()
+        );
+
+        self::assertFalse(
             $entity->getIsModerated()
         );
     }

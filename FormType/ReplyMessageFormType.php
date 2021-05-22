@@ -34,6 +34,7 @@ class ReplyMessageFormType extends AbstractAttachmentAwareFormType
     {
         $resolver->setDefaults([
             'intention' => 'reply',
+            'translation_domain' => 'FOSMessageBundle',
         ]);
     }
 

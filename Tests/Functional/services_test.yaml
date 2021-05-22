@@ -11,3 +11,6 @@ services:
 
   FOS\MessageBundle\Tests\Functional\Repository\:
     resource: 'Repository'
+
+  FOS\MessageBundle\FormType\:
+    resource: '../../FormType'

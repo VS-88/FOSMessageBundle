@@ -1,3 +1,5 @@
+approve:        Одобрить
+decline:        Отклонить
 messenger:      Сообщения
 inbox:          Входящие
 sent:           Отправленные
@@ -25,3 +27,9 @@ undelete:       Восстановить
 recipient:      Кому
 recipients:     Кому
 body:           Сообщение
+date:           Дата
+Message was successfully updated!: Данные были успешно обновлены!
+attachment: Прикрепить
+Send: Отправить
+Access Denied:  'Доступен запрещен!'
+Message was successfully created!: Данные были успешно сохранены!
